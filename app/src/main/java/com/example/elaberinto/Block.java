@@ -22,15 +22,25 @@ public class Block implements Solid {
         Point sp = s.getPosition();
         //Some code to check if the surface line is intersecting the ball
         int dist = Math.abs(sp.y - _y); //only works with horizontal lines
-        if (sp.x >= _x && sp.x <= _x + _width && dist <= Ball.RADIUS){
+        if (this.isOnSurface(sp.x, sp.y)){
+        //if (sp.x >= _x && sp.x <= _x + _width && dist <= Ball.RADIUS){
             double sx = s.getXSpeed();
             s.setSpeed(sx, 0.0f);
             s.move(sp.x, _y - Ball.RADIUS);
         }
     }
 
-    private boolean isInCircle(){
-        return true;
+    private boolean isOnSurface(int circleX, int circleY){
+        double radAngle = _angle * Math.PI / 180;
+        double dy = (_y + Math.sin(radAngle)*(_y + _width) - _y),
+               dx = (_x + Math.cos(radAngle)*(_x + _width) - _x);
+        double m = dy / dx;
+
+        double dist = Math.abs(circleY - m * circleX + _x * m - _y) / Math.sqrt(1 + m*m);
+        if (circleX >= _x && circleX <= (_x + _width) * Math.cos(radAngle) && dist <= Ball.RADIUS)
+            return true;
+        //calc the rect equation
+        return false;
     }
 
     //useless methods
@@ -69,10 +79,8 @@ public class Block implements Solid {
     public void draw(Canvas canvas) {
         Paint p = new Paint();
         p.setColor(Color.BLACK);
-        int pivotX = Math.round(_x + (float) _width / 2);
-        int pivotY = Math.round(_y + (float) _height / 2);
         canvas.save();
-        canvas.rotate((float)_angle, pivotX, pivotY);
+        canvas.rotate((float)_angle, _x, _y);
         canvas.drawRect(_x, _y, _x + _width, _y + _height, p);
         canvas.restore();
     }

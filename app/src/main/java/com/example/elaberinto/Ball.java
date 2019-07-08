@@ -9,7 +9,7 @@ import android.graphics.Rect;
 public class Ball implements Solid{
     private int _x, _y;
     private double _speedX, _speedY, _weight, _acX, _acY;
-    public static final int RADIUS = 50;
+    public static final int RADIUS = 20;
     private static final double MAX_SPEED = 60.0f;
 
     public Ball(){
