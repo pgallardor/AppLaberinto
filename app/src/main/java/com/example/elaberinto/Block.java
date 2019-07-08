@@ -37,7 +37,7 @@ public class Block implements Solid {
         double m = dy / dx;
 
         double dist = Math.abs(circleY - m * circleX + _x * m - _y) / Math.sqrt(1 + m*m);
-        if (circleX >= _x && circleX <= (_x + _width) * Math.cos(radAngle) && dist <= Ball.RADIUS)
+        if (circleX >= _x && circleX <= _x + (_x + _width) * Math.cos(radAngle) && dist <= Ball.RADIUS)
             return true;
         //calc the rect equation
         return false;
