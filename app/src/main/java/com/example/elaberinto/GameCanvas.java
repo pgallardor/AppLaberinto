@@ -16,6 +16,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     private Ball _ball;
     private Block[] _block;
     public static final int BLOCKS = 2;
+    public static final double GRAVITY = 1.5f;
 
     public GameCanvas(Context context) {
         super(context);
@@ -24,8 +25,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         _thread = new MainThread(getHolder(), this);
         _ball = new Ball();
         _block = new Block[BLOCKS];
-        _block[0] = new Block(400, 400, 20, 200);
-        _block[1] = new Block(200, 600, 20, 200);
+        _block[0] = new Block(400, 400, 20, 200, 0.0f);
+        _block[1] = new Block(200, 600, 20, 200, 0.0f);
         setFocusable(true);
     }
 
@@ -52,6 +53,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     }
 
     public void calcPhysics(){
+        _ball.setAcceleration(0.0f, GRAVITY);
         _ball.calcMovement(); //inertia and gravity
 
         _block[0].onCollide(_ball); //collisions
@@ -74,7 +76,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
             y = Math.round(event.getY());
 
         System.out.println(x + ", " + y);
-        _ball.setSpeed(0.0f);
+        _ball.setSpeed(-1.5f, 0.0f);
         _ball.move(x, y);
 
         return true;

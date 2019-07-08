@@ -8,15 +8,16 @@ import android.graphics.Rect;
 
 public class Ball implements Solid{
     private int _x, _y;
-    private double _speed, _weight;
+    private double _speedX, _speedY, _weight, _acX, _acY;
     public static final int RADIUS = 50;
-    private static final double GRAVITY = 1.5f,
-                                MAX_SPEED = 60.0f;
+    private static final double MAX_SPEED = 60.0f;
 
     public Ball(){
         _x = 0;
         _y = 0;
-        _speed = 0.0f;
+        _acX = 0;
+        _acY = 0;
+        _speedX = _speedY = 0.0f;
     }
 
     public Ball(int x, int y){
@@ -32,12 +33,14 @@ public class Ball implements Solid{
 
     public void calcMovement(){ //velocity vector
         //first calc the new position
-        _y = (int)(_y + Math.round(_speed));
-        _speed += GRAVITY; //accel
+        _y = (int)(_y + Math.round(_speedY));
+        _x = (int)(_x + Math.round(_speedX));
+        _speedY += _acY; //accel
+        _speedX += _acX;
 
         //speed capping
-        if (_speed > MAX_SPEED)
-            _speed = MAX_SPEED;
+        if (_speedY > MAX_SPEED) //modular or component cap??
+            _speedY = MAX_SPEED;
 
     }
 
@@ -47,15 +50,40 @@ public class Ball implements Solid{
         canvas.drawCircle(_x, _y, RADIUS, p);
     }
 
-    public void onCollide(Solid s){
-        //does nothing
+    public void setSpeed(double sx, double sy){
+        _speedX = sx;
+        _speedY = sy;
     }
 
-    public void setSpeed(double ns){
-        _speed = ns;
+    @Override
+    public void setAcceleration(double ax, double ay) {
+        _acX = ax;
+        _acY = ay;
+    }
+
+    @Override
+    public double getXSpeed() {
+        return _speedX;
+    }
+
+    @Override
+    public double getYSpeed() {
+        return _speedY;
+    }
+
+    public double getXAccel(){
+        return _acX;
+    }
+
+    public double getYAccel(){
+        return _acY;
     }
 
     public Point getPosition(){
+        //base angle???
         return new Point(_x, _y + RADIUS);
     }
+
+    public void onCollide(Solid s){/*does nothing*/}
+
 }
