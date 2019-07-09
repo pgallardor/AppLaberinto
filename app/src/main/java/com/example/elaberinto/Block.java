@@ -20,38 +20,37 @@ public class Block implements Solid {
 
     public void onCollide(Solid s){
         Point sp = s.getPosition();
-        //Some code to check if the surface line is intersecting the ball
-        //int dist = Math.abs(sp.y - _y); //only works with horizontal lines
-        if (this.isOnSurface(sp.x, sp.y)){
-            //double sx = s.getXSpeed();
-            if (Math.abs(_angle) < 1e-6){
-                s.setSpeed(s.getXSpeed(), 0.0f);
-            }
-            else if (Math.abs(_angle - 180.f) < 1e-6){
-                s.setSpeed(0.0f, s.getYSpeed());
-            }
-            else {
-                s.setSpeed(0.0f, 0.0f);
-                double accelX = s.getXAccel(), accelY = s.getYAccel();
-                double radAngle = _angle * Math.PI / 180;
-                accelX += GameCanvas.GRAVITY * Math.sin(radAngle) * Math.cos(radAngle);
-                accelY += GameCanvas.GRAVITY * Math.sin(radAngle) * Math.sin(radAngle);
-                s.setAcceleration(accelX, accelY);
-            }
-            Point near = this.nearest(sp.x, sp.y);
-            s.move(near.x, near.y);
-        }
+        //add friction
+        double accelX = 0.0f, accelY = 0.0f;
+        double radAngle = Math.toRadians(_angle);
+        accelX += GameCanvas.GRAVITY * Math.sin(radAngle) * Math.cos(radAngle);
+        accelY += GameCanvas.GRAVITY * Math.sin(radAngle) * Math.sin(radAngle);
+        s.setAcceleration(accelX, accelY);
+
+        Point near = this.nearest(sp.x, sp.y);
+        s.move(near.x, near.y);
+
     }
 
-    private boolean isOnSurface(int circleX, int circleY){
+    public void onImpact(Solid s){
+        //stop the solid
+        if (Math.abs(_angle) < 1e-6){
+            s.setSpeed(s.getXSpeed(), 0.0f);
+            s.setAcceleration(s.getXAccel(), 0.0f);
+        }
+        else if (Math.abs(_angle - 90.0f) < 1e-6){
+            s.setSpeed(0.0f, s.getYSpeed());
+            s.setAcceleration(0.0f, s.getYAccel());
+        }
+        else s.setSpeed(0.0f, 0.0f);
+    }
+
+    public boolean isOnSurface(int circleX, int circleY){
         double radAngle = _angle * Math.PI / 180;
-        //double dy = (_y + Math.sin(radAngle)*(_y + _width) - _y),
-        //       dx = (_x + Math.cos(radAngle)*(_x + _width) - _x);
-        //double m = dy / dx;
         double m = Math.tan(radAngle);
 
         double dist = Math.abs(circleY - m * circleX + _x * m - _y) / Math.sqrt(1 + m*m);
-        if (circleX >= _x && circleX <= (_x + _width) * Math.cos(radAngle) && dist <= Ball.RADIUS)
+        if (circleX >= _x && circleX <= _x + (_width) * Math.cos(radAngle) && dist <= Ball.RADIUS)
             return true;
         //calc the rect equation
         return false;

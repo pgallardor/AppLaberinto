@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -15,6 +16,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     private MainThread _thread;
     private Ball _ball;
     private Block[] _block;
+    private boolean[] _wasOnBlock;
     public static final int BLOCKS = 5;
     public static final double GRAVITY = 1.5f;
 
@@ -30,6 +32,12 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         _block[2] = new Block(400, 900, 20, 400, 330.0f);
         _block[3] = new Block(300, 1200, 20, 400, 0.0f);
         _block[4] = new Block(340, 1100, 20, 160, 89.0f);
+
+        _wasOnBlock = new boolean[BLOCKS];
+        for (int i = 0; i < BLOCKS; i++){
+            _wasOnBlock[i] = false;
+        }
+
         setFocusable(true);
     }
 
@@ -57,9 +65,18 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
 
     public void calcPhysics(){
         _ball.setAcceleration(0.0f, GRAVITY);
-
+        Point sp = _ball.getPosition();
         for (int i = 0; i < BLOCKS; i++){
-            _block[i].onCollide(_ball);
+            if (_block[i].isOnSurface(sp.x, sp.y)){
+                if (_wasOnBlock[i]){
+                    _block[i].onCollide(_ball);
+                }
+                else{
+                    _block[i].onImpact(_ball);
+                }
+                _wasOnBlock[i] = true;
+            }
+            else _wasOnBlock[i] = false;
         }
 
         _ball.calcMovement(); //inertia and gravity

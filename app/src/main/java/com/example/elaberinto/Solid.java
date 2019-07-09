@@ -4,6 +4,7 @@ import android.graphics.Point;
 
 public interface Solid {
     void onCollide(Solid s);
+    void onImpact(Solid s);
     void setSpeed(double sx, double sy); //this will be a 2D vector soon
     void calcMovement(); //calcs the next position of the solid
     Point getPosition(); //test this with a getShape

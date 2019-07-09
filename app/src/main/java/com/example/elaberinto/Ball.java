@@ -79,6 +79,8 @@ public class Ball implements Solid{
         return _acY;
     }
 
+    public void onImpact(Solid s){}
+
     public Point getPosition(){
         //base angle???
         return new Point(_x, _y + RADIUS);
