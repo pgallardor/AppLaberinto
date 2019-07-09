@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.Pair;
+import android.view.FrameMetrics;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -17,7 +19,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     private Ball _ball;
     private Block[] _block;
     private boolean[] _wasOnBlock;
-    public static final int BLOCKS = 5;
+    public static final int BLOCKS = 5, FRAME_CHECK = 50;
     public static final double GRAVITY = 1.5f;
 
     public GameCanvas(Context context) {
@@ -30,8 +32,10 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         _block[0] = new Block(400, 400, 20, 200, 0.0f);
         _block[1] = new Block(370, 600, 20, 200, 30.0f);
         _block[2] = new Block(400, 900, 20, 400, 330.0f);
-        _block[3] = new Block(300, 1200, 20, 400, 0.0f);
-        _block[4] = new Block(340, 1100, 20, 160, 90.0f);
+        _block[3] = new Block(200, 1100, 20, 160, 80.0f);
+        _block[4] = new Block(150, 1200, 20, 400, 0.0f);
+
+        _ball.setAcceleration(0.0f, GRAVITY);
 
         _wasOnBlock = new boolean[BLOCKS];
         for (int i = 0; i < BLOCKS; i++){
@@ -64,22 +68,31 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     }
 
     public void calcPhysics(){
-        _ball.setAcceleration(0.0f, GRAVITY);
+        boolean movementInterrupted = false;
+        _ball.setAcceleration(_ball.getXAccel(), GRAVITY);
         Point sp = _ball.getPosition();
-        for (int i = 0; i < BLOCKS; i++){
-            if (_block[i].isOnSurface(sp.x, sp.y)){
-                if (_wasOnBlock[i]){
-                    _block[i].onCollide(_ball);
-                }
-                else{
-                    _block[i].onImpact(_ball);
-                }
-                _wasOnBlock[i] = true;
+        Pair<Double, Double> ballSpeed = new Pair<>(_ball.getXSpeed(), _ball.getYSpeed());
+        for (int n_frame = 0; n_frame <= FRAME_CHECK; n_frame++) {
+            for (int i = 0; i < BLOCKS; i++) {
+                int deltaX = (int)Math.round(n_frame * ballSpeed.first / FRAME_CHECK);
+                int deltaY = (int)Math.round(n_frame * ballSpeed.second / FRAME_CHECK);
+                if (_block[i].isOnSurface(sp.x + deltaX, sp.y + deltaY)) {
+                    _ball.move(sp.x + deltaX, sp.y + deltaY);
+                    if (_wasOnBlock[i]) {
+                        _block[i].onCollide(_ball);
+                    } else {
+                        _block[i].onImpact(_ball);
+                        movementInterrupted = true;
+                        _wasOnBlock[i] = true;
+                        break;
+                    }
+                    _wasOnBlock[i] = true;
+                } else _wasOnBlock[i] = false;
             }
-            else _wasOnBlock[i] = false;
         }
-
-        _ball.calcMovement(); //inertia and gravity
+        //inertia and gravity
+        if (!movementInterrupted)
+            _ball.calcMovement();
     }
 
     public void draw(Canvas canvas){
@@ -99,7 +112,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
             y = Math.round(event.getY());
 
         System.out.println(x + ", " + y);
-        _ball.setSpeed(-1.5f, 0.0f);
+        _ball.setSpeed(-3.0f, 0.0f);
         _ball.move(x, y);
 
         return true;

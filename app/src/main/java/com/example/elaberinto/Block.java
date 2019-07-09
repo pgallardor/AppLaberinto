@@ -23,8 +23,13 @@ public class Block implements Solid {
         //add friction
         double accelX = 0.0f, accelY = 0.0f;
         double radAngle = Math.toRadians(_angle);
-        accelX += GameCanvas.GRAVITY * Math.sin(radAngle) * Math.cos(radAngle);
-        accelY += GameCanvas.GRAVITY * Math.sin(radAngle) * Math.sin(radAngle);
+
+        if (Math.abs(_angle) < 1e-6){
+            s.setSpeed(s.getXSpeed(), 0.0f);
+        }
+
+        accelX += GameCanvas.GRAVITY * Math.sin(radAngle) * Math.cos(radAngle) * 0.4f;
+        accelY += GameCanvas.GRAVITY * Math.sin(radAngle) * Math.sin(radAngle) * 0.4f;
         s.setAcceleration(accelX, accelY);
 
         Point near = this.nearest(sp.x, sp.y);

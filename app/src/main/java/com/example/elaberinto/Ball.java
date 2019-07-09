@@ -42,6 +42,9 @@ public class Ball implements Solid{
         if (_speedY > MAX_SPEED) //modular or component cap??
             _speedY = MAX_SPEED;
 
+        if (_speedX > MAX_SPEED)
+            _speedX = MAX_SPEED;
+
     }
 
     public void draw(Canvas canvas){
