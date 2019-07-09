@@ -31,7 +31,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         _block[1] = new Block(370, 600, 20, 200, 30.0f);
         _block[2] = new Block(400, 900, 20, 400, 330.0f);
         _block[3] = new Block(300, 1200, 20, 400, 0.0f);
-        _block[4] = new Block(340, 1100, 20, 160, 89.0f);
+        _block[4] = new Block(340, 1100, 20, 160, 90.0f);
 
         _wasOnBlock = new boolean[BLOCKS];
         for (int i = 0; i < BLOCKS; i++){
