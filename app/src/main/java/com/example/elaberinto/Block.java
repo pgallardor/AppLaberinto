@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.Log;
 
 public class Block implements Solid {
     private int _height, _width, _x, _y;
@@ -20,6 +21,7 @@ public class Block implements Solid {
 
     public void onCollide(Solid s){
         Point sp = s.getPosition();
+        Log.d("COLLISION", "ANGLE_" + _angle);
         //add friction
         double accelX = 0.0f, accelY = 0.0f;
         double radAngle = Math.toRadians(_angle);
@@ -36,6 +38,7 @@ public class Block implements Solid {
 
     public void onImpact(Solid s){
         //stop the solid
+        Log.d("IMPACT", "ANGLE_" + _angle);
         if (Math.abs(_angle) < 1e-6){
             s.setSpeed(s.getXSpeed(), 0.0f);
             s.setAcceleration(s.getXAccel(), 0.0f);
@@ -44,7 +47,10 @@ public class Block implements Solid {
             s.setSpeed(0.0f, s.getYSpeed());
             s.setAcceleration(0.0f, s.getYAccel());
         }
-        else s.setSpeed(0.0f, 0.0f);
+        else {
+            s.setSpeed(0.0f, 0.0f);
+            s.setAcceleration(0.0f, 0.0f);
+        }
 
         //Point sp = s.getPosition(), near = this.nearest(sp.x, sp.y);
         //s.move(near.x, near.y);

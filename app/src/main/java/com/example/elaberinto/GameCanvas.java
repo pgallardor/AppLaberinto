@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.Log;
 import android.util.Pair;
 import android.view.FrameMetrics;
 import android.view.MotionEvent;
@@ -35,7 +36,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         _block[3] = new Block(200, 1100, 20, 160, 80.0f);
         _block[4] = new Block(150, 1200, 20, 400, 0.0f);
 
-        _ball.setAcceleration(0.0f, GRAVITY);
+        //_ball.setAcceleration(0.0f, GRAVITY);
 
         _wasOnBlock = new boolean[BLOCKS];
         for (int i = 0; i < BLOCKS; i++){
@@ -77,23 +78,28 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
                 int deltaX = (int)Math.round(n_frame * ballSpeed.first / FRAME_CHECK);
                 int deltaY = (int)Math.round(n_frame * ballSpeed.second / FRAME_CHECK);
                 if (_block[i].isOnSurface(sp.x + deltaX, sp.y + deltaY)) {
-                    _ball.move(sp.x + deltaX, sp.y + deltaY);
+                    //Log.d("COLLISION", "DETECTED SOMETHING");
+                    onFreeFall = false;
                     if (_wasOnBlock[i]) {
                         _block[i].onCollide(_ball);
                     } else {
                         _block[i].onImpact(_ball);
+                        _ball.move(sp.x + deltaX, sp.y + deltaY);
                         movementInterrupted = true;
                     }
                     _wasOnBlock[i] = true;
-                    onFreeFall = false;
                     break;
                 } else _wasOnBlock[i] = false;
             }
         }
         //inertia and gravity
         if (!movementInterrupted){
-            if (onFreeFall) _ball.setAcceleration(_ball.getXAccel(), GRAVITY);
             _ball.calcMovement();
+            if (onFreeFall) {
+                _ball.setAcceleration(_ball.getXAccel(), GRAVITY);
+            }
+            else
+                Log.d("INFO", "NOT FREE FALL");
         }
     }
 
