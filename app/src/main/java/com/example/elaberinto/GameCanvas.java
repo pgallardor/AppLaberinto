@@ -98,6 +98,10 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     public void draw(Canvas canvas){
         super.draw(canvas);
         canvas.drawRGB(255,255,255);
+        Paint p = new Paint();
+        p.setTextSize(40);
+        canvas.drawText(String.format("vx: %.2f vy: %.2f", _ball.getXSpeed(), _ball.getYSpeed()), 100, 100, p);
+        canvas.drawText(String.format("ax: %.2f ay: %.2f", _ball.getXAccel(), _ball.getYAccel()), 100, 150, p);
 
         _ball.draw(canvas);
         for (int i = 0; i < BLOCKS; i++){
