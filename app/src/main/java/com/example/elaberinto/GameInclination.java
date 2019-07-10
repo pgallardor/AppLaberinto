@@ -41,8 +41,9 @@ public class GameInclination implements SensorEventListener {
 
     }
     public Pair<Double, Double> getAcceleration(){
-        Pair<Double, Double> accel = new Pair<>((double)rotationValues[0],
-                (double)-rotationValues[1]);
+        //swap x and y
+        Pair<Double, Double> accel = new Pair<>((double)rotationValues[1],
+                (double)rotationValues[0]);
         //should map them to -1 and 1 before returning them
         return accel;
     }
