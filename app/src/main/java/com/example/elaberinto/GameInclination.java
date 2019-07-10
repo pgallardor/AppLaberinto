@@ -1,5 +1,49 @@
 package com.example.elaberinto;
 
-public class GameInclination {
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.util.Pair;
 
+public class GameInclination implements SensorEventListener {
+    private SensorManager sensorManager;
+    private Sensor rotationSensor;
+    private final float[] rotationValues = new float[4];
+
+
+    public GameInclination(Context context) {
+        sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        rotationValues[0] = 0;
+        rotationValues[1] = 0;
+        rotationValues[2] = 0;
+        rotationValues[3] = 0;
+
+        //register listener when we create this
+        //check updates every 10ms
+        sensorManager.registerListener(this, rotationSensor, 10000);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event){
+        if(event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR){
+            SensorManager.getRotationMatrixFromVector(rotationValues,
+                    event.values);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
+    /*public Pair<Double, Double> getAcceleration(){
+        Pair<Double, Double> accel = new Pair<Double, Double>();
+        return accel;
+    }
+    */
+    public void close(){
+        sensorManager.unregisterListener(this);
+    }
 }
