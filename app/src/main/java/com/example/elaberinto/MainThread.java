@@ -16,7 +16,11 @@ public class MainThread extends Thread {
     }
 
     public void run(){
+        //FPS logic
+        long startTime, timeMillis, waitTime, totalTime = 0, targetTime = 1000 / 60;
+        int frameCount = 0;
         while(_running){
+            startTime = System.nanoTime();
             canvas = null;
 
             try{
@@ -33,6 +37,20 @@ public class MainThread extends Thread {
                         e.printStackTrace();
                     }
                 }
+            }
+
+            timeMillis = (System.nanoTime() - startTime) / 1000000;
+            waitTime = targetTime - timeMillis;
+
+            try{
+                sleep(waitTime);
+            } catch (Exception e) {}
+
+            totalTime += System.nanoTime() - startTime;
+            frameCount++;
+            if (frameCount == 60){
+                frameCount = 0;
+                totalTime = 0;
             }
         }
     }
