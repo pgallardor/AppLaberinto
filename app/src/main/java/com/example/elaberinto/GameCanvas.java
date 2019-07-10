@@ -21,7 +21,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     private boolean[] _wasOnBlock;
     private GameInclination gameInclination;
     public static final int BLOCKS = 5, FRAME_CHECK = 40;
-    public static final double GRAVITY = 1.5f;
+    public static final double GRAVITY = 2.0f;
 
     public GameCanvas(Context context) {
         super(context);
@@ -94,11 +94,13 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
                 } else _wasOnBlock[i] = false;
             }
         }
+        Pair<Double, Double> rotAccel = gameInclination.getAcceleration();
+        _ball.setAcceleration(GRAVITY*rotAccel.first, GRAVITY*rotAccel.second);
         //inertia and gravity
         if (!movementInterrupted){
             _ball.calcMovement();
             if (onFreeFall) {
-                _ball.setAcceleration(_ball.getXAccel(), GRAVITY);
+              //  _ball.setAcceleration(_ball.getXAccel(), GRAVITY);
             }
         }
         sp = _ball.getPosition();
@@ -137,8 +139,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
             y = Math.round(event.getY());
 
         System.out.println(x + ", " + y);
-        _ball.setSpeed(-1.0f, 0.0f);
-        _ball.setAcceleration(-0.8f, 0.0f);
+        //_ball.setSpeed(-1.0f, 0.0f);
+        //_ball.setAcceleration(-0.8f, 0.0f);
         _ball.move(x, y);
 
         return true;

@@ -12,8 +12,7 @@ public class GameInclination implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor rotationSensor;
     private float[] rotationValues = new float[4];
-    private double maximumRotation;
-    private double minimumRotation;
+
 
 
     public GameInclination(Context context) {
@@ -24,11 +23,10 @@ public class GameInclination implements SensorEventListener {
         rotationValues[2] = 0;
         rotationValues[3] = 0;
 
-        maximumRotation = rotationSensor.getMaximumRange();
-        minimumRotation = - maximumRotation;
+
         //register listener when we create this
-        //check updates every 10ms
-        sensorManager.registerListener(this, rotationSensor, 10000);
+        //check updates every 100ms
+        sensorManager.registerListener(this, rotationSensor, 1000);
     }
 
     @Override
@@ -44,9 +42,8 @@ public class GameInclination implements SensorEventListener {
     }
     public Pair<Double, Double> getAcceleration(){
         Pair<Double, Double> accel = new Pair<>((double)rotationValues[0],
-                (double)rotationValues[1]);
+                (double)-rotationValues[1]);
         //should map them to -1 and 1 before returning them
-        Log.i("SENSOR", "MAX RANGE: "+ maximumRotation);
         return accel;
     }
 

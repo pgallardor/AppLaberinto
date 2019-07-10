@@ -10,7 +10,7 @@ public class Ball implements Solid{
     private int _x, _y;
     private double _speedX, _speedY, _weight, _acX, _acY;
     public static final int RADIUS = 20;
-    private static final double MAX_SPEED = 60.0f;
+    private static final double MAX_SPEED = 10.0f;
 
     public Ball(){
         _x = 0;
@@ -39,10 +39,10 @@ public class Ball implements Solid{
         _speedX += _acX;
 
         //speed capping
-        if (_speedY > MAX_SPEED) //modular or component cap??
+        if (Math.abs(_speedY) > MAX_SPEED) //modular or component cap??
             _speedY = MAX_SPEED;
 
-        if (_speedX > MAX_SPEED)
+        if (Math.abs(_speedX) > MAX_SPEED)
             _speedX = MAX_SPEED;
 
     }
