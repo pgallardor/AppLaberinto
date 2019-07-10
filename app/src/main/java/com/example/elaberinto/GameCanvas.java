@@ -1,6 +1,5 @@
 package com.example.elaberinto;
 
-import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,7 +8,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.Log;
 import android.util.Pair;
-import android.view.FrameMetrics;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -19,14 +17,17 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     private MainThread _thread;
     private Ball _ball;
     private Block[] _block;
+    private Rect _goal;
+    private boolean _gameWon;
     private boolean[] _wasOnBlock;
-    public static final int BLOCKS = 5, FRAME_CHECK = 50;
+    public static final int BLOCKS = 5, FRAME_CHECK = 40;
     public static final double GRAVITY = 1.5f;
 
     public GameCanvas(Context context) {
         super(context);
         getHolder().addCallback(this);
         this.setOnTouchListener(this);
+        _gameWon = false;
         _thread = new MainThread(getHolder(), this);
         _ball = new Ball();
         _block = new Block[BLOCKS];
@@ -37,7 +38,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         _block[4] = new Block(150, 1200, 20, 400, 0.0f);
 
         //_ball.setAcceleration(0.0f, GRAVITY);
-
+        _goal = new Rect(200,1100,300,1200);
         _wasOnBlock = new boolean[BLOCKS];
         for (int i = 0; i < BLOCKS; i++){
             _wasOnBlock[i] = false;
@@ -98,8 +99,10 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
             if (onFreeFall) {
                 _ball.setAcceleration(_ball.getXAccel(), GRAVITY);
             }
-            else
-                Log.d("INFO", "NOT FREE FALL");
+        }
+        sp = _ball.getPosition();
+        if (_goal.contains(sp.x, sp.y)){
+            _gameWon = true;
         }
     }
 
@@ -110,16 +113,22 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         p.setTextSize(40);
         canvas.drawText(String.format("vx: %.2f vy: %.2f", _ball.getXSpeed(), _ball.getYSpeed()), 100, 100, p);
         canvas.drawText(String.format("ax: %.2f ay: %.2f", _ball.getXAccel(), _ball.getYAccel()), 100, 150, p);
+        p.setColor(Color.GREEN);
+        canvas.drawRect(_goal, p);
 
         _ball.draw(canvas);
         for (int i = 0; i < BLOCKS; i++){
             _block[i].draw(canvas);
+        }
+        if (_gameWon) {
+            canvas.drawText("You won!", 100, 200, p);
         }
     }
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
         //System.out.println(view.getX() + " " + view.getY());
+        if (_gameWon) return false;
         int x = Math.round(event.getX()),
             y = Math.round(event.getY());
 
