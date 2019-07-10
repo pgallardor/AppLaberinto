@@ -102,7 +102,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
             }
         }
         sp = _ball.getPosition();
-        if (_goal.contains(sp.x, sp.y)){
+        if (_goal.left <= sp.x && sp.x <= _goal.right && _goal.top <= sp.y && sp.y <= _goal.bottom ){
             _gameWon = true;
         }
     }
@@ -132,7 +132,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     @Override
     public boolean onTouch(View view, MotionEvent event) {
         //System.out.println(view.getX() + " " + view.getY());
-        if (_gameWon) return false;
+        //if (_gameWon) return false;
         int x = Math.round(event.getX()),
             y = Math.round(event.getY());
 
