@@ -68,12 +68,12 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     }
 
     public void calcPhysics(){
-        boolean movementInterrupted = false;
-        _ball.setAcceleration(_ball.getXAccel(), GRAVITY);
+        boolean movementInterrupted = false, onFreeFall = true;
+        //_ball.setAcceleration(_ball.getXAccel(), GRAVITY);
         Point sp = _ball.getPosition();
         Pair<Double, Double> ballSpeed = new Pair<>(_ball.getXSpeed(), _ball.getYSpeed());
-        for (int n_frame = 0; n_frame <= FRAME_CHECK; n_frame++) {
-            for (int i = 0; i < BLOCKS; i++) {
+        for (int i = 0; i < BLOCKS; i++) {
+            for (int n_frame = 0; n_frame <= FRAME_CHECK; n_frame++) {
                 int deltaX = (int)Math.round(n_frame * ballSpeed.first / FRAME_CHECK);
                 int deltaY = (int)Math.round(n_frame * ballSpeed.second / FRAME_CHECK);
                 if (_block[i].isOnSurface(sp.x + deltaX, sp.y + deltaY)) {
@@ -83,16 +83,18 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
                     } else {
                         _block[i].onImpact(_ball);
                         movementInterrupted = true;
-                        _wasOnBlock[i] = true;
-                        break;
                     }
                     _wasOnBlock[i] = true;
+                    onFreeFall = false;
+                    break;
                 } else _wasOnBlock[i] = false;
             }
         }
         //inertia and gravity
-        if (!movementInterrupted)
+        if (!movementInterrupted){
+            if (onFreeFall) _ball.setAcceleration(_ball.getXAccel(), GRAVITY);
             _ball.calcMovement();
+        }
     }
 
     public void draw(Canvas canvas){

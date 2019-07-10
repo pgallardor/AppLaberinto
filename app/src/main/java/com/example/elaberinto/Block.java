@@ -32,9 +32,6 @@ public class Block implements Solid {
         accelY += GameCanvas.GRAVITY * Math.sin(radAngle) * Math.sin(radAngle) * 0.4f;
         s.setAcceleration(accelX, accelY);
 
-        Point near = this.nearest(sp.x, sp.y);
-        s.move(near.x, near.y);
-
     }
 
     public void onImpact(Solid s){
@@ -48,6 +45,9 @@ public class Block implements Solid {
             s.setAcceleration(0.0f, s.getYAccel());
         }
         else s.setSpeed(0.0f, 0.0f);
+
+        //Point sp = s.getPosition(), near = this.nearest(sp.x, sp.y);
+        //s.move(near.x, near.y);
     }
 
     public boolean isOnSurface(int circleX, int circleY){
