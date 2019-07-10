@@ -27,7 +27,9 @@ public class Block implements Solid {
         double radAngle = Math.toRadians(_angle);
 
         if (Math.abs(_angle) < 1e-6){
-            s.setSpeed(s.getXSpeed(), 0.0f);
+            s.setSpeed(s.getXSpeed() * 0.95, 0.0f);
+            s.setAcceleration(s.getXAccel() * 0.5f, 0.0f);
+            return;
         }
 
         accelX += GameCanvas.GRAVITY * Math.sin(radAngle) * Math.cos(radAngle) * 0.4f;
@@ -48,7 +50,7 @@ public class Block implements Solid {
             s.setAcceleration(0.0f, s.getYAccel());
         }
         else {
-            s.setSpeed(0.0f, 0.0f);
+            s.setSpeed(-s.getXSpeed() * 0.1f, -s.getYSpeed() * 0.1f);
             s.setAcceleration(0.0f, 0.0f);
         }
 

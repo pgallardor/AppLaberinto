@@ -124,7 +124,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
             y = Math.round(event.getY());
 
         System.out.println(x + ", " + y);
-        _ball.setSpeed(-3.0f, 0.0f);
+        _ball.setSpeed(-1.0f, 0.0f);
+        _ball.setAcceleration(-0.8f, 0.0f);
         _ball.move(x, y);
 
         return true;
