@@ -5,12 +5,15 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 import android.util.Pair;
 
 public class GameInclination implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor rotationSensor;
-    private final float[] rotationValues = new float[4];
+    private float[] rotationValues = new float[4];
+    private double maximumRotation;
+    private double minimumRotation;
 
 
     public GameInclination(Context context) {
@@ -21,6 +24,8 @@ public class GameInclination implements SensorEventListener {
         rotationValues[2] = 0;
         rotationValues[3] = 0;
 
+        maximumRotation = rotationSensor.getMaximumRange();
+        minimumRotation = - maximumRotation;
         //register listener when we create this
         //check updates every 10ms
         sensorManager.registerListener(this, rotationSensor, 10000);
@@ -29,8 +34,7 @@ public class GameInclination implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event){
         if(event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR){
-            SensorManager.getRotationMatrixFromVector(rotationValues,
-                    event.values);
+            rotationValues = event.values;
         }
     }
 
@@ -38,11 +42,14 @@ public class GameInclination implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
-    /*public Pair<Double, Double> getAcceleration(){
-        Pair<Double, Double> accel = new Pair<Double, Double>();
+    public Pair<Double, Double> getAcceleration(){
+        Pair<Double, Double> accel = new Pair<>((double)rotationValues[0],
+                (double)rotationValues[1]);
+        //should map them to -1 and 1 before returning them
+        Log.i("SENSOR", "MAX RANGE: "+ maximumRotation);
         return accel;
     }
-    */
+
     public void close(){
         sensorManager.unregisterListener(this);
     }

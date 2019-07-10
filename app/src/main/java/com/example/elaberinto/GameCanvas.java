@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -20,6 +19,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     private Rect _goal;
     private boolean _gameWon;
     private boolean[] _wasOnBlock;
+    private GameInclination gameInclination;
     public static final int BLOCKS = 5, FRAME_CHECK = 40;
     public static final double GRAVITY = 1.5f;
 
@@ -27,6 +27,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         super(context);
         getHolder().addCallback(this);
         this.setOnTouchListener(this);
+        gameInclination = new GameInclination(context);
         _gameWon = false;
         _thread = new MainThread(getHolder(), this);
         _ball = new Ball();
@@ -113,6 +114,9 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         p.setTextSize(40);
         canvas.drawText(String.format("vx: %.2f vy: %.2f", _ball.getXSpeed(), _ball.getYSpeed()), 100, 100, p);
         canvas.drawText(String.format("ax: %.2f ay: %.2f", _ball.getXAccel(), _ball.getYAccel()), 100, 150, p);
+        Pair<Double, Double> rotAccel = gameInclination.getAcceleration();
+        canvas.drawText(String.format("rot x: %.5f rot y: %.5f", rotAccel.first, rotAccel.second), 100, 250, p);
+
         p.setColor(Color.GREEN);
         canvas.drawRect(_goal, p);
 
