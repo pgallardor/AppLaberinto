@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -18,7 +19,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     private Block[] _block;
     private Rect _goal;
     private boolean _gameWon;
-    private boolean[] _wasOnBlock;
+    private int[] _wasOnBlock;
     private GameInclination gameInclination;
     public static final int BLOCKS = 5, FRAME_CHECK = 40;
     public static final double GRAVITY = 2.0f;
@@ -40,9 +41,9 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
 
         //_ball.setAcceleration(0.0f, GRAVITY);
         _goal = new Rect(200,1100,300,1200);
-        _wasOnBlock = new boolean[BLOCKS];
+        _wasOnBlock = new int[BLOCKS];
         for (int i = 0; i < BLOCKS; i++){
-            _wasOnBlock[i] = false;
+            _wasOnBlock[i] = 0;
         }
 
         setFocusable(true);
@@ -72,7 +73,11 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
 
     public void calcPhysics(){
         boolean movementInterrupted = false, onFreeFall = true;
-        //_ball.setAcceleration(_ball.getXAccel(), GRAVITY);
+       // _ball.setAcceleration(_ball.getXAccel(), GRAVITY);
+
+
+        Pair<Double, Double> rotAccel = gameInclination.getAcceleration();
+        _ball.setAcceleration(GRAVITY*rotAccel.first, GRAVITY*rotAccel.second);
         Point sp = _ball.getPosition();
         Pair<Double, Double> ballSpeed = new Pair<>(_ball.getXSpeed(), _ball.getYSpeed());
         for (int i = 0; i < BLOCKS; i++) {
@@ -80,29 +85,28 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
                 int deltaX = (int)Math.round(n_frame * ballSpeed.first / FRAME_CHECK);
                 int deltaY = (int)Math.round(n_frame * ballSpeed.second / FRAME_CHECK);
                 if (_block[i].isOnSurface(sp.x + deltaX, sp.y + deltaY)) {
-                    //Log.d("COLLISION", "DETECTED SOMETHING");
+                    Log.d("COLLISION", "DETECTED SOMETHING");
                     onFreeFall = false;
-                    if (_wasOnBlock[i]) {
+                    if (_wasOnBlock[i] > 0) {
                         _block[i].onCollide(_ball);
-                    } else {
+                    } else if (_wasOnBlock[i] == 0){
                         _block[i].onImpact(_ball);
                         _ball.move(sp.x + deltaX, sp.y + deltaY);
                         movementInterrupted = true;
                     }
-                    _wasOnBlock[i] = true;
+                    _wasOnBlock[i] = 10;
                     break;
-                } else _wasOnBlock[i] = false;
+                } else _wasOnBlock[i]--;
             }
         }
-        Pair<Double, Double> rotAccel = gameInclination.getAcceleration();
-        _ball.setAcceleration(GRAVITY*rotAccel.first, GRAVITY*rotAccel.second);
         //inertia and gravity
         if (!movementInterrupted){
-            _ball.calcMovement();
             if (onFreeFall) {
-              //  _ball.setAcceleration(_ball.getXAccel(), GRAVITY);
+             //   _ball.setAcceleration(_ball.getXAccel(), GRAVITY);
             }
         }
+
+        _ball.calcMovement();
         sp = _ball.getPosition();
         if (_goal.left <= sp.x && sp.x <= _goal.right && _goal.top <= sp.y && sp.y <= _goal.bottom ){
             _gameWon = true;

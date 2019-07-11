@@ -21,40 +21,54 @@ public class Block implements Solid {
 
     public void onCollide(Solid s){
         Point sp = s.getPosition();
-        //Log.d("COLLISION", "ANGLE_" + _angle);
+        Log.d("COLLISION", "ANGLE_" + _angle);
         //add friction
         double accelX = 0.0f, accelY = 0.0f;
         double radAngle = Math.toRadians(_angle);
 
         if (Math.abs(_angle) < 1e-6){
             s.setSpeed(s.getXSpeed() * 0.95, 0.0f);
-            s.setAcceleration(s.getXAccel() * 0.5f, 0.0f);
+           // s.setAcceleration(s.getXAccel() * 0.5f, 0.0f);
             return;
         }
-
-        accelX += GameCanvas.GRAVITY * Math.sin(radAngle) * Math.cos(radAngle) * 0.4f;
-        accelY += GameCanvas.GRAVITY * Math.sin(radAngle) * Math.sin(radAngle) * 0.4f;
+        s.setSpeed(s.getXSpeed(), 0 );
+        accelX += GameCanvas.GRAVITY * Math.sin(radAngle) * Math.cos(radAngle);
+        accelY += GameCanvas.GRAVITY * Math.sin(radAngle) * Math.sin(radAngle);
         s.setAcceleration(accelX, accelY);
 
     }
 
     public void onImpact(Solid s){
         //stop the solid
-        //Log.d("IMPACT", "ANGLE_" + _angle);
+        Log.d("IMPACT", "ANGLE_" + _angle);
+        Point sp = s.getPosition();
+        Double vx = s.getXSpeed();
+        Double vy = s.getYSpeed();
+        //u = vector bloque
+        //v = vector velocidad
+        //cos(theta) = dot(u, v)/magnitud(u) * magnitud(v)
+
+        Double ux = _width*Math.cos(Math.toRadians(_angle));
+        Double uy = _width*Math.sin(Math.toRadians(_angle));
+        Double theta = Math.acos((ux*vx + uy*vy)/(Math.sqrt(vx*vx + vy*vy)*_width));
+        s.setSpeed(0.8*vx*Math.cos(-theta), 0.8*vy*Math.sin(-theta));
+        s.setAcceleration(0, 0);
+        /*
         if (Math.abs(_angle) < 1e-6){
             s.setSpeed(s.getXSpeed(), 0.0f);
-            s.setAcceleration(s.getXAccel(), 0.0f);
+        //    s.setAcceleration(s.getXAccel(), 0.0f);
         }
         else if (Math.abs(_angle - 90.0f) < 1e-6){
             s.setSpeed(0.0f, s.getYSpeed());
-            s.setAcceleration(0.0f, s.getYAccel());
+         //   s.setAcceleration(0.0f, s.getYAccel());
         }
         else {
             s.setSpeed(0.0f, 0.0f);
-            s.setAcceleration(0.0f, 0.0f);
+       //     s.setAcceleration(0.0f, 0.0f);
         }
+        */
 
-        //Point sp = s.getPosition(), near = this.nearest(sp.x, sp.y);
+        Point near = this.nearest(sp.x, sp.y);
         //s.move(near.x, near.y);
     }
 
@@ -74,7 +88,8 @@ public class Block implements Solid {
         double x = (m * (sy + m * _x - _y) + sx) / (m*m + 1);
         double y = m * x - (m * _x - _y);
 
-        return new Point((int)Math.round(x), (int)Math.round(y));
+        return new Point((int)(Math.round(x+Ball.RADIUS*Math.cos(Math.toRadians(_angle)))),
+                (int)(Math.round(y) + Ball.RADIUS*Math.sin(Math.toRadians(_angle))));
     }
 
     //useless methods

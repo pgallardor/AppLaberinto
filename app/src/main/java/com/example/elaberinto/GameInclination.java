@@ -17,7 +17,7 @@ public class GameInclination implements SensorEventListener {
 
     public GameInclination(Context context) {
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
         rotationValues[0] = 0;
         rotationValues[1] = 0;
         rotationValues[2] = 0;
@@ -25,13 +25,13 @@ public class GameInclination implements SensorEventListener {
 
 
         //register listener when we create this
-        //check updates every 100ms
+        //check updates every 10ms
         sensorManager.registerListener(this, rotationSensor, 1000);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event){
-        if(event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR){
+        if(event.sensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR){
             rotationValues = event.values;
         }
     }
@@ -42,8 +42,8 @@ public class GameInclination implements SensorEventListener {
     }
     public Pair<Double, Double> getAcceleration(){
         //swap x and y
-        Pair<Double, Double> accel = new Pair<>((double)rotationValues[1],
-                (double)rotationValues[0]);
+        Pair<Double, Double> accel = new Pair<>((double)3*rotationValues[1],
+                (double)3*rotationValues[0]);
         //should map them to -1 and 1 before returning them
         return accel;
     }
