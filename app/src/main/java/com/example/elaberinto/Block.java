@@ -49,7 +49,16 @@ public class Block implements Solid {
         dx = _x + drotx;
         dy = _y + droty;
 
-
+        //rotate (circleX, circleY) before comparison
+        //https://math.stackexchange.com/questions/1687901/how-to-rotate-a-line-segment-around-one-of-the-end-points
+        double cosTheta = Math.cos(radAngle);
+        double sinTheta = Math.sin(radAngle);
+        double deltaX = dx - circleX;
+        double deltaY = dy - circleY;
+        double testX = _x + cosTheta*deltaX - sinTheta*deltaY;
+        double testY = _y + sinTheta*deltaX + cosTheta*deltaY;
+        circleX = (int) testX;
+        circleY = (int) testY;
         //return (circleX >= _x && circleX <= _x + _width && circleY >= _y && circleY <= y + _height);
         return (circleX >= x && circleX <= dx + _width && circleY >= y && circleY <= dy);
     }
@@ -99,7 +108,6 @@ public class Block implements Solid {
     public double getYAccel() {
         return 0.0f;
     }
-
     public void draw(Canvas canvas) {
         Paint p = new Paint();
         p.setColor(Color.BLACK);
