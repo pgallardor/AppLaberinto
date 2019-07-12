@@ -34,33 +34,26 @@ public class Block implements Solid {
         Double ux = _width*Math.cos(Math.toRadians(_angle));
         Double uy = _width*Math.sin(Math.toRadians(_angle));
         Double theta = Math.acos((ux*vx + uy*vy)/(Math.sqrt(vx*vx + vy*vy)*_width));
-        s.setSpeed(2*vx*Math.cos(-theta), 2*vy*Math.sin(-theta));
+        s.setSpeed(1.5*vx*Math.cos(-theta), 1.5*vy*Math.sin(-theta));
         //Point near = nearest(sp.x, sp.y);
         //s.move(near.x, near.y);
         s.setAcceleration(0, 0);
     }
 
     public boolean isOnSurface(int circleX, int circleY){
-        double x = (double)_x, y = (double)_y, dx, dy;
         double radAngle = Math.toRadians(_angle);
-        double drotx = (_width) * Math.cos(radAngle) - (_height) * Math.sin(radAngle);
-        double droty = (_width) * Math.sin(radAngle) + (_height) * Math.cos(radAngle);
-
-        dx = _x + drotx;
-        dy = _y + droty;
-
         //rotate (circleX, circleY) before comparison
         //https://math.stackexchange.com/questions/1687901/how-to-rotate-a-line-segment-around-one-of-the-end-points
         double cosTheta = Math.cos(radAngle);
         double sinTheta = Math.sin(radAngle);
-        double deltaX = dx - circleX;
-        double deltaY = dy - circleY;
-        double testX = _x + cosTheta*deltaX - sinTheta*deltaY;
-        double testY = _y + sinTheta*deltaX + cosTheta*deltaY;
+        double deltaX = _x - circleX;
+        double deltaY = _y - circleY;
+        double testX = _x - cosTheta*deltaX - sinTheta*deltaY;
+        double testY = _y - sinTheta*deltaX + cosTheta*deltaY;
         circleX = (int) testX;
         circleY = (int) testY;
         //return (circleX >= _x && circleX <= _x + _width && circleY >= _y && circleY <= y + _height);
-        return (circleX >= x && circleX <= dx + _width && circleY >= y && circleY <= dy);
+        return (circleX >= _x && circleX <= _x + _width && circleY >= _y && circleY <= _y + _height);
     }
 
     private Point nearest(int sx, int sy){
