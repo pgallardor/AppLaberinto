@@ -34,6 +34,7 @@ public class Block implements Solid {
         Double ux = _width*Math.cos(Math.toRadians(_angle));
         Double uy = _width*Math.sin(Math.toRadians(_angle));
         Double theta = Math.acos((ux*vx + uy*vy)/(Math.sqrt(vx*vx + vy*vy)*_width));
+        Log.d("ONIMPACT ANGLE: ", String.valueOf(Math.toDegrees(theta)));
         s.setSpeed(1.5*vx*Math.cos(-theta), 1.5*vy*Math.sin(-theta));
         //Point near = nearest(sp.x, sp.y);
         //s.move(near.x, near.y);

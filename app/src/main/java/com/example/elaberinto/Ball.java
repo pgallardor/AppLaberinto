@@ -52,6 +52,11 @@ public class Ball implements Solid{
         Paint p = new Paint();
         p.setColor(Color.GRAY);
         canvas.drawCircle(_x, _y, RADIUS, p);
+
+        //draw velocity vector direction
+        p.setColor(Color.RED);
+        p.setStrokeWidth(10);
+        canvas.drawLine(_x, _y, (float)  (_x + _speedX*10), (float) (_y+_speedY*10), p);
     }
 
     public void setSpeed(double sx, double sy){
