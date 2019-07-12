@@ -20,26 +20,9 @@ public class Block implements Solid {
     }
 
     public void onCollide(Solid s){
-        Point sp = s.getPosition();
-        Log.d("COLLISION", "ANGLE_" + _angle);
-        //add friction
-        double accelX = 0.0f, accelY = 0.0f;
-        double radAngle = Math.toRadians(_angle);
-
-        if (Math.abs(_angle) < 1e-6){
-            s.setSpeed(s.getXSpeed() * 0.95, 0.0f);
-           // s.setAcceleration(s.getXAccel() * 0.5f, 0.0f);
-            return;
-        }
-        s.setSpeed(s.getXSpeed(), 0 );
-        accelX += GameCanvas.GRAVITY * Math.sin(radAngle) * Math.cos(radAngle);
-        accelY += GameCanvas.GRAVITY * Math.sin(radAngle) * Math.sin(radAngle);
-        s.setAcceleration(accelX, accelY);
-
     }
 
     public void onImpact(Solid s){
-        //stop the solid
         Log.d("IMPACT", "ANGLE_" + _angle);
         Point sp = s.getPosition();
         Double vx = s.getXSpeed();
@@ -51,45 +34,48 @@ public class Block implements Solid {
         Double ux = _width*Math.cos(Math.toRadians(_angle));
         Double uy = _width*Math.sin(Math.toRadians(_angle));
         Double theta = Math.acos((ux*vx + uy*vy)/(Math.sqrt(vx*vx + vy*vy)*_width));
-        s.setSpeed(0.8*vx*Math.cos(-theta), 0.8*vy*Math.sin(-theta));
-        s.setAcceleration(0, 0);
-        /*
-        if (Math.abs(_angle) < 1e-6){
-            s.setSpeed(s.getXSpeed(), 0.0f);
-        //    s.setAcceleration(s.getXAccel(), 0.0f);
-        }
-        else if (Math.abs(_angle - 90.0f) < 1e-6){
-            s.setSpeed(0.0f, s.getYSpeed());
-         //   s.setAcceleration(0.0f, s.getYAccel());
-        }
-        else {
-            s.setSpeed(0.0f, 0.0f);
-       //     s.setAcceleration(0.0f, 0.0f);
-        }
-        */
-
-        Point near = this.nearest(sp.x, sp.y);
+        s.setSpeed(2*vx*Math.cos(-theta), 2*vy*Math.sin(-theta));
+        //Point near = nearest(sp.x, sp.y);
         //s.move(near.x, near.y);
+        s.setAcceleration(0, 0);
     }
 
     public boolean isOnSurface(int circleX, int circleY){
-        double radAngle = _angle * Math.PI / 180;
-        double m = Math.tan(radAngle);
+        double x = (double)_x, y = (double)_y, dx, dy;
+        double radAngle = Math.toRadians(_angle);
+        double drotx = (_width) * Math.cos(radAngle) - (_height) * Math.sin(radAngle);
+        double droty = (_width) * Math.sin(radAngle) + (_height) * Math.cos(radAngle);
 
-        double dist = Math.abs(circleY - m * circleX + _x * m - _y) / Math.sqrt(1 + m*m);
-        if (circleX >= _x && circleX <= _x + (_width) * Math.cos(radAngle) && dist <= Ball.RADIUS)
-            return true;
-        //calc the rect equation
-        return false;
+        dx = _x + drotx;
+        dy = _y + droty;
+
+        if (x > dx){
+            double aux = x;
+            x = dx;
+            dx = aux;
+        }
+
+        if (y > dy){
+            double aux = y;
+            y = dy;
+            dy = aux;
+        }
+
+        //return (circleX >= _x && circleX <= _x + _width && circleY >= _y && circleY <= y + _height);
+        return (circleX >= x && circleX <= dx + _width && circleY >= y && circleY <= dy);
     }
 
     private Point nearest(int sx, int sy){
         double m = Math.tan(Math.toRadians(_angle));
-        double x = (m * (sy + m * _x - _y) + sx) / (m*m + 1);
+        double x = (m * ((double)sy + m * _x - _y) + (double)sx) / (m*m + 1);
         double y = m * x - (m * _x - _y);
 
         return new Point((int)(Math.round(x+Ball.RADIUS*Math.cos(Math.toRadians(_angle)))),
                 (int)(Math.round(y) + Ball.RADIUS*Math.sin(Math.toRadians(_angle))));
+    }
+
+    private double pointProduct(Point sp){
+        return 0.0f;
     }
 
     //useless methods
