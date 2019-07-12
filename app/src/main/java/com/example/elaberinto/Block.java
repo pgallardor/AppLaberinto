@@ -49,17 +49,6 @@ public class Block implements Solid {
         dx = _x + drotx;
         dy = _y + droty;
 
-        if (x > dx){
-            double aux = x;
-            x = dx;
-            dx = aux;
-        }
-
-        if (y > dy){
-            double aux = y;
-            y = dy;
-            dy = aux;
-        }
 
         //return (circleX >= _x && circleX <= _x + _width && circleY >= _y && circleY <= y + _height);
         return (circleX >= x && circleX <= dx + _width && circleY >= y && circleY <= dy);
@@ -118,5 +107,13 @@ public class Block implements Solid {
         canvas.rotate((float)_angle, _x, _y);
         canvas.drawRect(_x, _y, _x + _width, _y + _height, p);
         canvas.restore();
+
+        double radAngle = Math.toRadians(_angle);
+        float x1 = (float) (_x + (_width) * Math.cos(radAngle) - (_height) * Math.sin(radAngle));
+        float y1 = (float) (_y + (_width) * Math.sin(radAngle) + (_height) * Math.cos(radAngle));
+
+        canvas.drawCircle(_x, _y, 10, p);
+        p.setColor(Color.RED);
+        canvas.drawCircle(x1,  y1, 10, p);
     }
 }

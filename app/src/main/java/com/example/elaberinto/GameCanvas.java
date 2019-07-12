@@ -23,12 +23,14 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     private GameInclination gameInclination;
     public static final int BLOCKS = 5, FRAME_CHECK = 40;
     public static final double GRAVITY = 2.0f;
-
+    private float _lastCollisionX, _lastCollisionY;
     public GameCanvas(Context context) {
         super(context);
         getHolder().addCallback(this);
         this.setOnTouchListener(this);
         gameInclination = new GameInclination(context);
+        _lastCollisionX = 0;
+        _lastCollisionY = 0;
         _gameWon = false;
         _thread = new MainThread(getHolder(), this);
         _ball = new Ball();
@@ -86,6 +88,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
                 int deltaY = (int)Math.round(n_frame * ballSpeed.second / FRAME_CHECK);
                 if (_block[i].isOnSurface(sp.x + deltaX, sp.y + deltaY)) {
                     Log.d("COLLISION", "DETECTED SOMETHING");
+                    _lastCollisionX = sp.x + deltaX;
+                    _lastCollisionY = sp.y +  deltaY;
                     onFreeFall = false;
                     if (_wasOnBlock[i] > 0) {
                         _block[i].onCollide(_ball);
@@ -136,6 +140,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         if (_gameWon) {
             canvas.drawText("You won!", 100, 200, p);
         }
+        p.setColor(Color.BLUE);
+        canvas.drawCircle(_lastCollisionX, _lastCollisionY, 10, p);
     }
 
     @Override
