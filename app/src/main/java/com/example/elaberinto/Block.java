@@ -20,6 +20,20 @@ public class Block implements Solid {
     }
 
     public void onCollide(Solid s){
+        Point sp = s.getPosition();
+        Double radAngle = Math.toRadians(_angle);
+        Double vx = s.getXSpeed();
+        Double vy = s.getYSpeed();
+        //u = vector bloque
+        //v = vector velocidad
+        //cos(theta) = dot(u, v)/magnitud(u) * magnitud(v)
+
+        Double ux = _width*Math.cos(radAngle),
+               uy = _width*Math.sin(radAngle);
+        Double theta = Math.acos((ux*vx + uy*vy)/(Math.sqrt(vx*vx + vy*vy)*_width));
+        //s.setSpeed(vx - vx * Math.cos(-theta), vy - vy * Math.sin(-theta));
+        //s.setAcceleration(Math.signum(s.getXAccel()) * GameCanvas.GRAVITY * Math.cos(radAngle),
+        //        Math.signum(s.getYAccel()) * GameCanvas.GRAVITY * Math.sin(radAngle));
     }
 
     public void onImpact(Solid s){
@@ -35,7 +49,11 @@ public class Block implements Solid {
         Double uy = _width*Math.sin(Math.toRadians(_angle));
         Double theta = Math.acos((ux*vx + uy*vy)/(Math.sqrt(vx*vx + vy*vy)*_width));
         Log.d("ONIMPACT ANGLE: ", String.valueOf(Math.toDegrees(theta)));
-        s.setSpeed(1.5*vx*Math.cos(-theta), 1.5*vy*Math.sin(-theta));
+        if (theta > Math.PI / 2) theta = theta - Math.PI / 2;
+        if (Math.abs(_angle - 90.0f) < 1e-6){
+            s.setSpeed(-vx*Math.cos(-theta), -vy*Math.sin(-theta));
+        }
+        else s.setSpeed(vx*Math.cos(-theta), vy*Math.sin(-theta));
         //Point near = nearest(sp.x, sp.y);
         //s.move(near.x, near.y);
         s.setAcceleration(0, 0);

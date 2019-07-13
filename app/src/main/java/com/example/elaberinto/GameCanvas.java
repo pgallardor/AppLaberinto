@@ -34,25 +34,46 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         _gameWon = false;
         _thread = new MainThread(getHolder(), this);
         _ball = new Ball();
-        _block = new Block[BLOCKS];
-        _block[0] = new Block(400, 400, 20, 200, 0.0f);
-        _block[1] = new Block(370, 600, 20, 200, 30.0f);
-        _block[2] = new Block(400, 900, 20, 400, 330.0f);
-        _block[3] = new Block(200, 1100, 20, 160, 80.0f);
-        _block[4] = new Block(150, 1200, 20, 400, 0.0f);
 
+        loadLevel("kek");
         //_ball.setAcceleration(0.0f, GRAVITY);
-        _goal = new Rect(200,1100,300,1200);
-        _wasOnBlock = new int[BLOCKS];
-        for (int i = 0; i < BLOCKS; i++){
-            _wasOnBlock[i] = 0;
-        }
 
         setFocusable(true);
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
 
+    }
+
+    public void loadLevel(String filename){
+        if (filename.equals("test")){
+            _block = new Block[BLOCKS];
+            _block[0] = new Block(400, 400, 20, 200, 0.0f);
+            _block[1] = new Block(370, 600, 20, 200, 30.0f);
+            _block[2] = new Block(400, 900, 20, 400, 330.0f);
+            _block[3] = new Block(200, 1100, 20, 160, 80.0f);
+            _block[4] = new Block(150, 1200, 20, 400, 0.0f);
+
+            _goal = new Rect(200,1100,300,1200);
+            _wasOnBlock = new int[BLOCKS];
+            for (int i = 0; i < BLOCKS; i++){
+                _wasOnBlock[i] = 0;
+            }
+            return;
+        }
+        //TODO: load file
+        _block = new Block[5];
+        _block[0] = new Block(50, 50, 20, 400, 0.0f);
+        _block[1] = new Block(50,50, 20, 250, 90.0f);
+        _block[2] = new Block(50, 300, 20, 250, 0.0f);
+        _block[3] = new Block(450, 50, 20, 250, 90.0f);
+        _block[4] = new Block(350, 100, 20, 200, 0.0f);
+
+        _goal = new Rect(200,1100,300,1200);
+        _wasOnBlock = new int[5];
+        for (int i = 0; i < 5; i++){
+            _wasOnBlock[i] = 0;
+        }
     }
 
     public void surfaceCreated(SurfaceHolder holder){
@@ -94,11 +115,11 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
                     if (_wasOnBlock[i] > 0) {
                         _block[i].onCollide(_ball);
                     } else if (_wasOnBlock[i] == 0){
-                        //_ball.move(sp.x + deltaX, sp.y + deltaY);
+                        _ball.move(sp.x + deltaX, sp.y + deltaY);
                         _block[i].onImpact(_ball);
                         movementInterrupted = true;
                     }
-                    _wasOnBlock[i] = 5;
+                    _wasOnBlock[i] = 0;
                     break;
                 } else {
                     _wasOnBlock[i]--;
