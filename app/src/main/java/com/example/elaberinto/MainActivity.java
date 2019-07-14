@@ -18,9 +18,12 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        //setContentView(R.layout.activity_main);
+
         setContentView(R.layout.game_layout);
         GameCanvas game = new GameCanvas(this);
         FrameLayout gameLayout = findViewById(R.id.game_layout);
         gameLayout.addView(game);
+        
     }
 }

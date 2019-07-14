@@ -21,13 +21,14 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     private Block[] _block;
     private Rect _goal;
     private boolean _gameWon;
-    private int[] _wasOnBlock;
     private Hole _hole;
     private GameInclination gameInclination;
-    public static final int BLOCKS = 5, FRAME_CHECK = 40;
+    public static final int BLOCKS = 5;
     public static final double GRAVITY = 2.0f;
     private float _lastCollisionX, _lastCollisionY;
     private int screenWidth, screenHeight;
+    private GameListener gameListener;
+
     public GameCanvas(Context context) {
         super(context);
         getHolder().addCallback(this);
@@ -64,10 +65,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
             _block[4] = new Block(150, 1200, 20, 400, 0.0f);
 
             _goal = new Rect(200, 1100, 300, 1200);
-            _wasOnBlock = new int[BLOCKS];
-            for (int i = 0; i < BLOCKS; i++) {
-                _wasOnBlock[i] = 0;
-            }
+
             return;
         }
         //TODO: load file
@@ -81,10 +79,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         _hole = new Hole(500, 500, 20);
 
         _goal = new Rect(200, 1100, 300, 1200);
-        _wasOnBlock = new int[5];
-        for (int i = 0; i < 5; i++) {
-            _wasOnBlock[i] = 0;
-        }
+
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
@@ -191,5 +186,9 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         _ball.move(x, y);
 
         return true;
+    }
+
+    public interface GameListener {
+        public void onGameEnding();
     }
 }
