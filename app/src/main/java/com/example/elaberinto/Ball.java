@@ -10,7 +10,7 @@ public class Ball implements Solid{
     private int _x, _y;
     private double _speedX, _speedY, _weight, _acX, _acY;
     public static final int RADIUS = 20;
-    private static final double MAX_SPEED = 7.0f;
+    private static final double MAX_SPEED = 6.0f;
 
     public Ball(){
         _x = 0;
