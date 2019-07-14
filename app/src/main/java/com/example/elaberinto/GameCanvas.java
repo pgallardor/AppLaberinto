@@ -22,6 +22,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     private Rect _goal;
     private boolean _gameWon;
     private int[] _wasOnBlock;
+    private Hole _hole;
     private GameInclination gameInclination;
     public static final int BLOCKS = 5, FRAME_CHECK = 40;
     public static final double GRAVITY = 2.0f;
@@ -38,7 +39,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         _thread = new MainThread(getHolder(), this);
         _ball = new Ball();
 
-        loadLevel("test");
+        loadLevel("kek");
         //_ball.setAcceleration(0.0f, GRAVITY);
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -76,6 +77,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         _block[2] = new Block(50, 300, 20, 250, 0.0f);
         _block[3] = new Block(450, 50, 20, 250, 90.0f);
         _block[4] = new Block(350, 100, 20, 200, 0.0f);
+
+        _hole = new Hole(500, 500, 20);
 
         _goal = new Rect(200, 1100, 300, 1200);
         _wasOnBlock = new int[5];
@@ -129,6 +132,10 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         if (_goal.left <= sp.x && sp.x <= _goal.right && _goal.top <= sp.y && sp.y <= _goal.bottom) {
             _gameWon = true;
         }
+
+        if (_hole.isOnSurface(sp.x, sp.y)){
+            _hole.onImpact(_ball);
+        }
     }
 
     public void draw(Canvas canvas) {
@@ -146,6 +153,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         p.setColor(Color.GREEN);
         canvas.drawRect(_goal, p);
 
+        _hole.draw(canvas);
+
         _ball.draw(canvas);
         for (int i = 0; i < BLOCKS; i++) {
             _block[i].draw(canvas);
@@ -153,6 +162,11 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         if (_gameWon) {
             canvas.drawText("You won!", 100, 200, p);
         }
+        if (!_ball.isAlive()){
+            p.setColor(Color.RED);
+            canvas.drawText("You fell!", 100, 200, p);
+        }
+
         p.setColor(Color.BLUE);
         canvas.drawCircle(_lastCollisionX, _lastCollisionY, 10, p);
         canvas.restore();
@@ -167,6 +181,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     public boolean onTouch(View view, MotionEvent event) {
         //System.out.println(view.getX() + " " + view.getY());
         //if (_gameWon) return false;
+        _ball.setStatus(Ball.ALIVE);
         int x = Math.round(event.getX()),
                 y = Math.round(event.getY());
 
