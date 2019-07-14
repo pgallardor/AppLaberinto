@@ -92,7 +92,7 @@ public class Ball implements Solid{
 
     public Point getPosition(){
         //base angle???
-        return new Point(_x, _y + RADIUS);
+        return new Point(_x, _y);
     }
 
     public void onCollide(Solid s){/*does nothing*/}

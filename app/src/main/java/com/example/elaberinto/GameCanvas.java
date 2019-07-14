@@ -24,6 +24,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     public static final int BLOCKS = 5, FRAME_CHECK = 40;
     public static final double GRAVITY = 2.0f;
     private float _lastCollisionX, _lastCollisionY;
+
     public GameCanvas(Context context) {
         super(context);
         getHolder().addCallback(this);
@@ -35,18 +36,18 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         _thread = new MainThread(getHolder(), this);
         _ball = new Ball();
 
-        loadLevel("kek");
+        loadLevel("test");
         //_ball.setAcceleration(0.0f, GRAVITY);
 
         setFocusable(true);
     }
 
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
     }
 
-    public void loadLevel(String filename){
-        if (filename.equals("test")){
+    public void loadLevel(String filename) {
+        if (filename.equals("test")) {
             _block = new Block[BLOCKS];
             _block[0] = new Block(400, 400, 20, 200, 0.0f);
             _block[1] = new Block(370, 600, 20, 200, 30.0f);
@@ -54,9 +55,9 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
             _block[3] = new Block(200, 1100, 20, 160, 80.0f);
             _block[4] = new Block(150, 1200, 20, 400, 0.0f);
 
-            _goal = new Rect(200,1100,300,1200);
+            _goal = new Rect(200, 1100, 300, 1200);
             _wasOnBlock = new int[BLOCKS];
-            for (int i = 0; i < BLOCKS; i++){
+            for (int i = 0; i < BLOCKS; i++) {
                 _wasOnBlock[i] = 0;
             }
             return;
@@ -64,86 +65,68 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         //TODO: load file
         _block = new Block[5];
         _block[0] = new Block(50, 50, 20, 400, 0.0f);
-        _block[1] = new Block(50,50, 20, 250, 90.0f);
+        _block[1] = new Block(50, 50, 20, 250, 90.0f);
         _block[2] = new Block(50, 300, 20, 250, 0.0f);
         _block[3] = new Block(450, 50, 20, 250, 90.0f);
         _block[4] = new Block(350, 100, 20, 200, 0.0f);
 
-        _goal = new Rect(200,1100,300,1200);
+        _goal = new Rect(200, 1100, 300, 1200);
         _wasOnBlock = new int[5];
-        for (int i = 0; i < 5; i++){
+        for (int i = 0; i < 5; i++) {
             _wasOnBlock[i] = 0;
         }
     }
 
-    public void surfaceCreated(SurfaceHolder holder){
+    public void surfaceCreated(SurfaceHolder holder) {
         _thread.setRunning(true);
         _thread.start();
     }
 
-    public void surfaceDestroyed(SurfaceHolder holder){
+    public void surfaceDestroyed(SurfaceHolder holder) {
         boolean retry = true;
-        while(retry){
+        while (retry) {
             try {
                 _thread.setRunning(false);
                 _thread.join();
-            } catch (InterruptedException e){
-                e.printStackTrace();;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                ;
             }
             retry = false;
         }
     }
 
-    public void calcPhysics(){
+    public void calcPhysics() {
         boolean movementInterrupted = false, onFreeFall = true;
-       // _ball.setAcceleration(_ball.getXAccel(), GRAVITY);
-
+        // _ball.setAcceleration(_ball.getXAccel(), GRAVITY);
+        _ball.calcMovement();
 
         Pair<Double, Double> rotAccel = gameInclination.getAcceleration();
-        _ball.setAcceleration(GRAVITY*rotAccel.first, GRAVITY*rotAccel.second);
+        _ball.setAcceleration(GRAVITY * rotAccel.first, GRAVITY * rotAccel.second);
         Point sp = _ball.getPosition();
+        //check for position on the NEXT frame
         Pair<Double, Double> ballSpeed = new Pair<>(_ball.getXSpeed(), _ball.getYSpeed());
         for (int i = 0; i < BLOCKS; i++) {
-            for (int n_frame = 0; n_frame <= FRAME_CHECK; n_frame++) {
-                int deltaX = (int)Math.round(n_frame * ballSpeed.first / FRAME_CHECK);
-                int deltaY = (int)Math.round(n_frame * ballSpeed.second / FRAME_CHECK);
-                if (_block[i].isOnSurface(sp.x + deltaX, sp.y + deltaY)) {
-                    Log.d("COLLISION", "DETECTED SOMETHING");
-                    _lastCollisionX = sp.x + deltaX;
-                    _lastCollisionY = sp.y +  deltaY;
-                    onFreeFall = false;
-                    if (_wasOnBlock[i] > 0) {
-                        _block[i].onCollide(_ball);
-                    } else if (_wasOnBlock[i] == 0){
-                        _ball.move(sp.x + deltaX, sp.y + deltaY);
-                        _block[i].onImpact(_ball);
-                        movementInterrupted = true;
-                    }
-                    _wasOnBlock[i] = 0;
-                    break;
-                } else {
-                    _wasOnBlock[i]--;
-                    if (_wasOnBlock[i] < 0) _wasOnBlock[i] = 0;
-                }
-            }
-        }
-        //inertia and gravity
-        if (!movementInterrupted){
-            if (onFreeFall) {
-             //   _ball.setAcceleration(_ball.getXAccel(), GRAVITY);
+            if (_block[i].isOnSurface((int)(sp.x+ballSpeed.first), (int) (sp.y + ballSpeed.second))) {
+                Log.d("COLLISION", "DETECTED SOMETHING");
+                _lastCollisionX = sp.x;
+                _lastCollisionY = sp.y;
+                //response to collision
+                _block[i].resolveCollision(_ball);
+                //move to previous time
+                //_ball.move((int)(sp.x-ballSpeed.first+_ball.getXAccel()), (int)(sp.y-ballSpeed.second+_ball.getYSpeed()));
             }
         }
 
-        _ball.calcMovement();
         sp = _ball.getPosition();
-        if (_goal.left <= sp.x && sp.x <= _goal.right && _goal.top <= sp.y && sp.y <= _goal.bottom ){
+        if (_goal.left <= sp.x && sp.x <= _goal.right && _goal.top <= sp.y && sp.y <= _goal.bottom) {
             _gameWon = true;
         }
     }
 
-    public void draw(Canvas canvas){
+    public void draw(Canvas canvas) {
         super.draw(canvas);
-        canvas.drawRGB(255,255,255);
+        canvas.drawRGB(255, 255, 255);
         Paint p = new Paint();
         p.setTextSize(40);
         canvas.drawText(String.format("vx: %.2f vy: %.2f", _ball.getXSpeed(), _ball.getYSpeed()), 100, 100, p);
@@ -155,7 +138,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         canvas.drawRect(_goal, p);
 
         _ball.draw(canvas);
-        for (int i = 0; i < BLOCKS; i++){
+        for (int i = 0; i < BLOCKS; i++) {
             _block[i].draw(canvas);
         }
         if (_gameWon) {
@@ -170,7 +153,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         //System.out.println(view.getX() + " " + view.getY());
         //if (_gameWon) return false;
         int x = Math.round(event.getX()),
-            y = Math.round(event.getY());
+                y = Math.round(event.getY());
 
         System.out.println(x + ", " + y);
         _ball.setSpeed(0.0f, 0.0f);

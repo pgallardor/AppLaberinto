@@ -20,6 +20,7 @@ public class Block implements Solid {
     }
 
     public void onCollide(Solid s){
+        Log.d("ONCOLLIDE", "METHOD CALLLED");
         Point sp = s.getPosition();
         Double radAngle = Math.toRadians(_angle);
         Double vx = s.getXSpeed();
@@ -30,8 +31,10 @@ public class Block implements Solid {
 
         Double ux = _width*Math.cos(radAngle),
                uy = _width*Math.sin(radAngle);
-        Double theta = Math.acos((ux*vx + uy*vy)/(Math.sqrt(vx*vx + vy*vy)*_width));
-        //s.setSpeed(vx - vx * Math.cos(-theta), vy - vy * Math.sin(-theta));
+        Double theta = Math.acos((ux*vx + uy*vy)/(Math.sqrt(vx*vx + vy*vy)*_width + 1e-6));
+        //idea, rotate the speed vector in 90 - _alpha degrees?
+        Log.d("ONCOLLIDE", "theta: "+ theta);
+        //s.setSpeed(vx * Math.cos(90-theta), vy * Math.sin(90-theta));
         //s.setAcceleration(Math.signum(s.getXAccel()) * GameCanvas.GRAVITY * Math.cos(radAngle),
         //        Math.signum(s.getYAccel()) * GameCanvas.GRAVITY * Math.sin(radAngle));
     }
@@ -47,18 +50,53 @@ public class Block implements Solid {
 
         Double ux = _width*Math.cos(Math.toRadians(_angle));
         Double uy = _width*Math.sin(Math.toRadians(_angle));
-        Double theta = Math.acos((ux*vx + uy*vy)/(Math.sqrt(vx*vx + vy*vy)*_width));
+        Double theta = Math.acos((ux*vx + uy*vy)/(Math.sqrt(vx*vx + vy*vy)*_width + 1e-6));
         Log.d("ONIMPACT ANGLE: ", String.valueOf(Math.toDegrees(theta)));
+
+        s.setSpeed(vx*Math.cos(theta), vy*Math.sin(theta));
+        /*
         if (theta > Math.PI / 2) theta = theta - Math.PI / 2;
         if (Math.abs(_angle - 90.0f) < 1e-6){
             s.setSpeed(-vx*Math.cos(-theta), -vy*Math.sin(-theta));
         }
         else s.setSpeed(vx*Math.cos(-theta), vy*Math.sin(-theta));
+        */
         //Point near = nearest(sp.x, sp.y);
         //s.move(near.x, near.y);
-        s.setAcceleration(0, 0);
+        //s.setAcceleration(0, 0);
     }
+    public void resolveCollision(Solid s){
+        Log.d("RESOLVE COLLISION", "ANGLE_" + _angle);
+        Point sp = s.getPosition();
+        Double vx = s.getXSpeed();
+        Double vy = s.getYSpeed();
+        //u = vector bloque
+        //v = vector velocidad
+        //cos(theta) = dot(u, v)/magnitud(u) * magnitud(v)
 
+        Double ux = _width*Math.cos(Math.toRadians(_angle));
+        Double uy = _width*Math.sin(Math.toRadians(_angle));
+        Double theta = Math.acos((ux*vx + uy*vy)/(Math.sqrt(vx*vx + vy*vy)*_width + 1e-6));
+        Log.d("ONIMPACT ANGLE: ", String.valueOf(Math.toDegrees(theta)));
+
+        //s.setSpeed(vx*Math.cos(theta), vy*Math.sin(theta));
+        //move solid to nearest point before collision.
+        //or bounce back?
+
+
+        if (theta > Math.PI / 2) theta = theta - Math.PI / 2;
+        //damp speed
+        float slowFactor = 0.7f;
+        if (Math.abs(_angle - 90.0f) < 1e-6){
+            s.setSpeed(-vx*Math.cos(-theta)*slowFactor, -vy*Math.sin(-theta)*slowFactor);
+        }
+        else s.setSpeed(vx*Math.cos(-theta)*slowFactor, vy*Math.sin(-theta*slowFactor));
+
+        //cap speed and or acceleration
+        //Point near = nearest(sp.x, sp.y);
+        //s.move(near.x, near.y);
+        s.setAcceleration(s.getXAccel()*slowFactor, s.getYAccel()*slowFactor);
+    }
     public boolean isOnSurface(int circleX, int circleY){
         double radAngle = Math.toRadians(_angle);
         //rotate (circleX, circleY) before comparison
@@ -76,7 +114,7 @@ public class Block implements Solid {
     }
 
     private Point nearest(int sx, int sy){
-        double m = Math.tan(Math.toRadians(_angle));
+        double m = Math.tan(Math.toRadians(_angle)+1e-6);
         double x = (m * ((double)sy + m * _x - _y) + (double)sx) / (m*m + 1);
         double y = m * x - (m * _x - _y);
 
