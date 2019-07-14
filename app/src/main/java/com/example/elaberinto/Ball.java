@@ -11,6 +11,8 @@ public class Ball implements Solid{
     private double _speedX, _speedY, _weight, _acX, _acY;
     public static final int RADIUS = 20;
     private static final double MAX_SPEED = 7.0f;
+    public static final boolean ALIVE = true;
+    private boolean _isAlive;
 
     public Ball(){
         _x = 0;
@@ -18,6 +20,7 @@ public class Ball implements Solid{
         _acX = 0;
         _acY = 0;
         _speedX = _speedY = 0.0f;
+        _isAlive = true;
     }
 
     public Ball(int x, int y){
@@ -48,7 +51,17 @@ public class Ball implements Solid{
 
     }
 
+    public void setStatus(boolean alive){
+        _isAlive = alive;
+    }
+
+    public boolean isAlive(){
+        return _isAlive;
+    }
+
     public void draw(Canvas canvas){
+        if (!_isAlive) return;
+
         Paint p = new Paint();
         p.setColor(Color.GRAY);
         canvas.drawCircle(_x, _y, RADIUS, p);
@@ -68,6 +81,10 @@ public class Ball implements Solid{
     public void setAcceleration(double ax, double ay) {
         _acX = ax;
         _acY = ay;
+    }
+
+    public boolean isOnSurface(int circleX, int circleY){
+        return false;
     }
 
     @Override

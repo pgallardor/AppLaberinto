@@ -14,4 +14,5 @@ public interface Solid {
     double getXAccel();
     double getYAccel();
     boolean move(int x, int y);
+    boolean isOnSurface(int circleX, int circleY);
 }
