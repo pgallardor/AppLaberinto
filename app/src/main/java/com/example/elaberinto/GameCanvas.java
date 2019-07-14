@@ -8,10 +8,12 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.Log;
 import android.util.Pair;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.WindowManager;
 
 public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener {
     private MainThread _thread;
@@ -24,7 +26,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     public static final int BLOCKS = 5, FRAME_CHECK = 40;
     public static final double GRAVITY = 2.0f;
     private float _lastCollisionX, _lastCollisionY;
-
+    private int screenWidth, screenHeight;
     public GameCanvas(Context context) {
         super(context);
         getHolder().addCallback(this);
@@ -38,7 +40,12 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
 
         loadLevel("test");
         //_ball.setAcceleration(0.0f, GRAVITY);
-
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        screenWidth = size.x;
+        screenHeight = size.y;
         setFocusable(true);
     }
 
@@ -129,6 +136,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         canvas.drawRGB(255, 255, 255);
         Paint p = new Paint();
         p.setTextSize(40);
+        canvas.save();
+        canvas.scale((float)(screenWidth/1080.0), (float)(screenHeight/1920.0));
         canvas.drawText(String.format("vx: %.2f vy: %.2f", _ball.getXSpeed(), _ball.getYSpeed()), 100, 100, p);
         canvas.drawText(String.format("ax: %.2f ay: %.2f", _ball.getXAccel(), _ball.getYAccel()), 100, 150, p);
         Pair<Double, Double> rotAccel = gameInclination.getAcceleration();
@@ -146,6 +155,12 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         }
         p.setColor(Color.BLUE);
         canvas.drawCircle(_lastCollisionX, _lastCollisionY, 10, p);
+        canvas.restore();
+        //assume we draw on a 10000x10000 canvas
+        /*
+        canvas.translate(screenWidth, screenHeight);
+        canvas.restore();
+        */
     }
 
     @Override
