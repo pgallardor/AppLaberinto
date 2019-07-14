@@ -21,9 +21,10 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     private Block[] _block;
     private Rect _goal;
     private boolean _gameWon;
+    private int[] _wasOnBlock;
     private Hole _hole;
     private GameInclination gameInclination;
-    public static final int BLOCKS = 5;
+    public static int BLOCKS = 5, FRAME_CHECK = 40;
     public static final double GRAVITY = 2.0f;
     private float _lastCollisionX, _lastCollisionY;
     private int screenWidth, screenHeight;
@@ -57,6 +58,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
 
     public void loadLevel(String filename) {
         if (filename.equals("test")) {
+            BLOCKS = 5;
             _block = new Block[BLOCKS];
             _block[0] = new Block(400, 400, 20, 200, 0.0f);
             _block[1] = new Block(370, 600, 20, 200, 30.0f);
@@ -65,21 +67,38 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
             _block[4] = new Block(150, 1200, 20, 400, 0.0f);
 
             _goal = new Rect(200, 1100, 300, 1200);
-
+            _wasOnBlock = new int[BLOCKS];
+            for (int i = 0; i < BLOCKS; i++) {
+                _wasOnBlock[i] = 0;
+            }
             return;
         }
         //TODO: load file
-        _block = new Block[5];
+        BLOCKS = 12;
+        _block = new Block[BLOCKS];
         _block[0] = new Block(50, 50, 20, 400, 0.0f);
         _block[1] = new Block(50, 50, 20, 250, 90.0f);
-        _block[2] = new Block(50, 300, 20, 250, 0.0f);
+        _block[2] = new Block(30, 300, 20, 250, 0.0f);
         _block[3] = new Block(450, 50, 20, 250, 90.0f);
-        _block[4] = new Block(350, 100, 20, 200, 0.0f);
+        _block[4] = new Block(350, 300, 20, 100, 0.0f);
+        _block[5] = new Block(280, 300, 20, 350, 90.0f);
+        _block[6] = new Block(350, 300, 20, 420, 90.0f);
+        _block[7] = new Block(80, 630, 20, 200, 0.0f);
+        _block[8] = new Block(150, 700, 20, 180, 0.0f);
+        _block[9] = new Block(80, 630, 20, 320, 90.0f);
+        _block[10] = new Block(150, 700, 20, 250, 90.0f);
+        _block[11] = new Block(60, 950, 20, 90, 0.0f);
+        //_block[7] = new Block();
 
-        _hole = new Hole(500, 500, 20);
+        _hole = new Hole(200, 200, 20);
+        _goal = new Rect(80, 850, 140, 950);
 
-        _goal = new Rect(200, 1100, 300, 1200);
+        _ball.move(100, 100);
 
+        _wasOnBlock = new int[BLOCKS];
+        for (int i = 0; i < BLOCKS; i++) {
+            _wasOnBlock[i] = 0;
+        }
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
@@ -187,8 +206,10 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
 
         return true;
     }
-
     public interface GameListener {
-        public void onGameEnding();
+        void onGameWon();
+    }
+    public void setGameListener(GameListener gameListener){
+        this.gameListener = gameListener;
     }
 }

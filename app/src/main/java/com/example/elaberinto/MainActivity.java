@@ -24,6 +24,6 @@ public class MainActivity extends AppCompatActivity {
         GameCanvas game = new GameCanvas(this);
         FrameLayout gameLayout = findViewById(R.id.game_layout);
         gameLayout.addView(game);
-        
+
     }
 }

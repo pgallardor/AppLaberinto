@@ -32,13 +32,13 @@ public class Hole implements Solid {
         double x = Math.pow(circleX - _x, 2),
                y = Math.pow(circleY - _y, 2);
 
-        return x + y <= _radius*_radius - 10;
+        return x + y <= _radius*_radius;
     }
 
     public void draw(Canvas canvas){
         Paint p = new Paint();
         p.setColor(Color.BLACK);
-        canvas.drawCircle(_x, _y, _radius, p);
+        canvas.drawCircle(_x, _y, _radius + 7, p);
     }
 
     @Override

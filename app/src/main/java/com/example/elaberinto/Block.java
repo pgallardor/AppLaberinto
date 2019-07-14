@@ -160,12 +160,12 @@ public class Block implements Solid {
     }
     public void draw(Canvas canvas) {
         Paint p = new Paint();
-        p.setColor(Color.BLACK);
+        p.setColor(Color.rgb(102, 51, 0));
         canvas.save();
         canvas.rotate((float)_angle, _x, _y);
         canvas.drawRect(_x, _y, _x + _width, _y + _height, p);
         canvas.restore();
-
+        /*
         double radAngle = Math.toRadians(_angle);
         float x1 = (float) (_x + (_width) * Math.cos(radAngle) - (_height) * Math.sin(radAngle));
         float y1 = (float) (_y + (_width) * Math.sin(radAngle) + (_height) * Math.cos(radAngle));
@@ -173,5 +173,6 @@ public class Block implements Solid {
         canvas.drawCircle(_x, _y, 10, p);
         p.setColor(Color.RED);
         canvas.drawCircle(x1,  y1, 10, p);
+        */
     }
 }
