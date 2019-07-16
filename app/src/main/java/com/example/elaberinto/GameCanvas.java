@@ -281,4 +281,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     public void setGameListener(GameListener gameListener){
         this.gameListener = gameListener;
     }
+    public void setThreadRunning(boolean value){
+        _thread.setRunning(value);
+    }
 }
