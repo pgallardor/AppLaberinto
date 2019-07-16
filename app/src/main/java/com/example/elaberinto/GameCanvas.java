@@ -18,8 +18,7 @@ import android.view.WindowManager;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener {
-    private MainThread _thread;
+public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchListener {
     private Ball _ball;
     private Block[] _block;
     private Rect _goal;
@@ -33,16 +32,20 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     private float _lastCollisionX, _lastCollisionY;
     private int screenWidth, screenHeight;
     private GameListener gameListener;
+    private SurfaceHolder surfaceHolder;
+    private Context mContext;
+    private boolean mRunning;
+    private Thread mGameThread;
 
     public GameCanvas(Context context) {
         super(context);
-        getHolder().addCallback(this);
+        mContext = context;
         this.setOnTouchListener(this);
+        surfaceHolder = getHolder();
         gameInclination = new GameInclination(context);
         _lastCollisionX = 0;
         _lastCollisionY = 0;
         _gameWon = false;
-        _thread = new MainThread(getHolder(), this);
         _ball = new Ball();
 
         loadLevel("kek");
@@ -54,10 +57,6 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         screenWidth = size.x;
         screenHeight = size.y;
         setFocusable(true);
-    }
-
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
     }
 
     public void loadLevel(String filename) {
@@ -159,27 +158,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         }
     }
 
-    public void surfaceCreated(SurfaceHolder holder) {
-        _thread.setRunning(true);
-        _thread.start();
-    }
-
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        boolean retry = true;
-        while (retry) {
-            try {
-                _thread.setRunning(false);
-                _thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-
-            }
-            retry = false;
-        }
-    }
-
     public void calcPhysics() {
-        boolean movementInterrupted = false, onFreeFall = true;
         // _ball.setAcceleration(_ball.getXAccel(), GRAVITY);
         _ball.calcMovement();
 
@@ -211,8 +190,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         }
     }
 
-    public void draw(Canvas canvas) {
-        super.draw(canvas);
+    public void drawOnCanvas(Canvas canvas) {
+        //super.draw(canvas);
         canvas.drawRGB(255, 255, 255);
         Paint p = new Paint();
         p.setTextSize(40);
@@ -271,6 +250,39 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
 
         return true;
     }
+
+    @Override
+    public void run() {
+        Canvas canvas;
+        while(mRunning){
+            if(surfaceHolder.getSurface().isValid()){
+                canvas = surfaceHolder.lockCanvas();
+                //canvas.save();
+                calcPhysics();
+                drawOnCanvas(canvas);
+                //canvas.restore();
+                surfaceHolder.unlockCanvasAndPost(canvas);
+                //physics
+                //draw
+            }
+        }
+    }
+
+    public void onPause() {
+        mRunning = false;
+        try {
+            mGameThread.join();
+        } catch (InterruptedException e){
+
+        }
+    }
+
+    public void onResume() {
+        mRunning = true;
+        mGameThread = new Thread(this);
+        mGameThread.start();
+    }
+
     public interface GameListener {
         void onGameWon();
     }
@@ -281,7 +293,5 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     public void setGameListener(GameListener gameListener){
         this.gameListener = gameListener;
     }
-    public void setThreadRunning(boolean value){
-        _thread.setRunning(value);
-    }
+
 }
