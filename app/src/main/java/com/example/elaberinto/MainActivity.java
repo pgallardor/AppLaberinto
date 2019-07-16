@@ -27,21 +27,16 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);*/
 
         //setContentView(R.layout.activity_main);
+        game = new GameCanvas(this, "test");
+        game.setGameListener(this);
+        //setContentView(game);
 
         setContentView(R.layout.game_layout);
-        game = new GameCanvas(this);
         //game.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
         gameLayout = findViewById(R.id.game_layout);
-        game.setGameListener(this);
         gameLayout.addView(game);
         //gameLayout.removeAllViews();
         /*
-        game.setGameListener(new GameCanvas.GameListener() {
-            @Override
-            public void onGameWon() {
-                //swap level?
-            }
-        });
         */
 
     }
@@ -59,25 +54,29 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
     public void onGameWon() {
         //swap activity
         //launch intent to replace the level
-        //gameLayout.removeAllViews();
-        Log.d("GAME WON", "CALLBACK LEVEL COMPLETED");
 
-        GameCanvas game = (GameCanvas) gameLayout.getChildAt(0);
+        Log.d("GAME WON", "CALLBACK LEVEL COMPLETED");
         Log.d("GAME WON", "LAUNCHING ACTIVITY");
-        //Intent i = new Intent(this, TestActivity.class);
-        //startActivity(i);
+        /*
+        Intent i = new Intent(this, TestActivity.class);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                game.setWon(false);
+                game.setRunning(false);
+                gameLayout.removeAllViews();
+            }
+        })
+        startActivity(i);
+        */
         //stop thread? or something:c
         //game.setThreadRunning(false);
         //game.setVisibility(View.GONE);
-/*
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("SomeTitle").setMessage("SomeMessage");
-        AlertDialog dialog =  builder.create();
-        dialog.show();*/
+
+
         //game.setThreadRunning(true);
-        game.loadLevel("level2");
-        game.setWon(false);
-        game.setVisibility(View.VISIBLE);
+        //game.loadLevel("level2");
+        //game.setWon(false);
 
         //gameLayout.removeViewAt(0);
         //game =  new GameCanvas(this);
