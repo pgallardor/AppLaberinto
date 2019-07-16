@@ -77,7 +77,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
             return;
         }
 
-        InputStream is = getResources().openRawResource(R.raw.level1);
+        InputStream is = getResources().openRawResource(R.raw.level2);
         try{
             byte[] buffer = new byte[is.available()];
             String text = "";
@@ -147,29 +147,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
                 }
             }
         } catch(IOException e){ }
-        /*
-        //TODO: load file
-        BLOCKS = 12;
-        _block = new Block[BLOCKS];
-        _block[0] = new Block(50, 50, 20, 400, 0.0f);
-        _block[1] = new Block(50, 50, 20, 250, 90.0f);
-        _block[2] = new Block(30, 300, 20, 250, 0.0f);
-        _block[3] = new Block(450, 50, 20, 250, 90.0f);
-        _block[4] = new Block(350, 300, 20, 100, 0.0f);
-        _block[5] = new Block(280, 300, 20, 350, 90.0f);
-        _block[6] = new Block(350, 300, 20, 420, 90.0f);
-        _block[7] = new Block(80, 630, 20, 200, 0.0f);
-        _block[8] = new Block(150, 700, 20, 180, 0.0f);
-        _block[9] = new Block(80, 630, 20, 320, 90.0f);
-        _block[10] = new Block(150, 700, 20, 250, 90.0f);
-        _block[11] = new Block(60, 950, 20, 90, 0.0f);
-        //_block[7] = new Block();
 
-        _hole = new Hole[1];
-        _hole[0] = new Hole(200, 200, 20);
-        _goal = new Rect(80, 850, 140, 950);
-        */
-        _ball.move(100, 100);
+        _ball.move(_startPoint.x, _startPoint.y);
 
         _wasOnBlock = new int[BLOCKS];
         for (int i = 0; i < BLOCKS; i++) {
@@ -190,7 +169,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
                 _thread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                ;
+
             }
             retry = false;
         }
@@ -281,7 +260,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         System.out.println(x + ", " + y);
         _ball.setSpeed(0.0f, 0.0f);
         //_ball.setAcceleration(-0.8f, 0.0f);
-        _ball.move(x, y);
+        _ball.move(_startPoint.x, _startPoint.y);
 
         return true;
     }
