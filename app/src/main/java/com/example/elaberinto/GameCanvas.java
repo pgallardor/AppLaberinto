@@ -52,7 +52,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         _blockBMP = BitmapFactory.decodeResource(getResources(), R.drawable.darkwood);
         _ballBMP = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
 
-        loadLevel("test");
+        loadLevel(0);
         //_ball.setAcceleration(0.0f, GRAVITY);
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -67,8 +67,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
 
     }
 
-    public void loadLevel(String filename) {
-        if (filename.equals("test")) {
+    public void loadLevel(int lvlID) {
+        if (lvlID == 0) {
             BLOCKS = 5;
             _block = new Block[BLOCKS];
             _block[0] = new Block(400, 400, 20, 200, 0.0f);
@@ -87,8 +87,12 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
             _hole = new Hole[1];
             return;
         }
+        int res_lvlID = -1;
+        if (lvlID == 1) res_lvlID = R.raw.level1;
+        if (lvlID == 2) res_lvlID = R.raw.level2;
+        if (lvlID == 3) res_lvlID = R.raw.level3;
 
-        InputStream is = getResources().openRawResource(R.raw.level2);
+        InputStream is = getResources().openRawResource(res_lvlID);
         try{
             byte[] buffer = new byte[is.available()];
             String text = "";

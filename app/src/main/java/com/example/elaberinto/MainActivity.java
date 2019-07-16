@@ -14,6 +14,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity implements GameCanvas.GameListener {
     private FrameLayout gameLayout;
     private GameCanvas game;
+    private int level;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //setContentView(R.layout.activity_main);
-
+        level = 0;
         setContentView(R.layout.game_layout);
         game = new GameCanvas(this);
         gameLayout = findViewById(R.id.game_layout);
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
         //AlertDialog dialog =  builder.create();
         //dialog.show();
         //game.setThreadRunning(true);
-        game.loadLevel("level1");
+        game.loadLevel(++level);
         game.setWon(false);
         game.setVisibility(View.VISIBLE);
         //gameLayout.removeViewAt(0);
