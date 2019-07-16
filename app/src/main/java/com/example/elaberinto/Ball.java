@@ -1,5 +1,6 @@
 package com.example.elaberinto;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -67,9 +68,11 @@ public class Ball implements Solid{
         canvas.drawCircle(_x, _y, RADIUS, p);
 
         //draw velocity vector direction
+        /*
         p.setColor(Color.RED);
         p.setStrokeWidth(10);
         canvas.drawLine(_x, _y, (float)  (_x + _speedX*10), (float) (_y+_speedY*10), p);
+        */
     }
 
     public void setSpeed(double sx, double sy){

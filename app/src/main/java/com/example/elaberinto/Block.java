@@ -8,8 +8,9 @@ import android.graphics.Rect;
 import android.util.Log;
 
 public class Block implements Solid {
-    private int _height, _width, _x, _y;
+    private int _height, _width, _x, _y, __id;
     private double _angle; //we might consider this later
+    public static int N = 0;
 
     public Block(int x, int y, int height, int width, double angle){
         _x = x;
@@ -17,6 +18,8 @@ public class Block implements Solid {
         _height = height;
         _width = width;
         _angle = angle;
+        //level builder help
+        __id = N++;
     }
 
     public void onCollide(Solid s){
@@ -164,6 +167,9 @@ public class Block implements Solid {
         canvas.save();
         canvas.rotate((float)_angle, _x, _y);
         canvas.drawRect(_x, _y, _x + _width, _y + _height, p);
+        p.setColor(Color.WHITE);
+        p.setTextSize(24);
+        canvas.drawText(String.valueOf(__id + 1), _x + _width / 2, _y + (_height + 6) /2, p);
         canvas.restore();
         /*
         double radAngle = Math.toRadians(_angle);
