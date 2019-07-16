@@ -32,6 +32,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     public static final double GRAVITY = 2.0f;
     private float _lastCollisionX, _lastCollisionY;
     private int screenWidth, screenHeight;
+    private GameListener gameListener;
+
     public GameCanvas(Context context) {
         super(context);
         getHolder().addCallback(this);
@@ -74,6 +76,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
             for (int i = 0; i < BLOCKS; i++) {
                 _wasOnBlock[i] = 0;
             }
+
             return;
         }
 
@@ -247,6 +250,10 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         canvas.translate(screenWidth, screenHeight);
         canvas.restore();
         */
+        if(hasWon()){
+            //_thread.setRunning(false);
+            gameListener.onGameWon();
+        }
     }
 
     @Override
@@ -263,5 +270,15 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         _ball.move(_startPoint.x, _startPoint.y);
 
         return true;
+    }
+    public interface GameListener {
+        void onGameWon();
+    }
+    public boolean hasWon(){
+        return _gameWon;
+    }
+    public void setWon(boolean state){ _gameWon = state;}
+    public void setGameListener(GameListener gameListener){
+        this.gameListener = gameListener;
     }
 }
