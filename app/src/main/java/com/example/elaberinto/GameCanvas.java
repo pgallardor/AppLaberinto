@@ -270,6 +270,10 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         canvas.translate(screenWidth, screenHeight);
         canvas.restore();
         */
+        if(hasWon()){
+            _thread.setRunning(false);
+            gameListener.onGameWon();
+        }
     }
 
     @Override
@@ -289,6 +293,9 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     }
     public interface GameListener {
         void onGameWon();
+    }
+    public boolean hasWon(){
+        return _gameWon;
     }
     public void setGameListener(GameListener gameListener){
         this.gameListener = gameListener;
