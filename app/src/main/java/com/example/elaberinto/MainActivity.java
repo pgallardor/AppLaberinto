@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -46,9 +47,14 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
         //launch intent to replace the level
         //gameLayout.removeAllViews();
         Log.d("GAME WON", "CALLBACK LEVEL COMPLETED");
-        gameLayout.removeViewAt(0);
-        game =  new GameCanvas(this);
-        gameLayout.addView(game);
+        GameCanvas game = (GameCanvas) gameLayout.getChildAt(0);
+        //game.setVisibility(View.GONE);
+        game.loadLevel("kek");
+        game.setWon(false);
+        game.setVisibility(View.VISIBLE);
+        //gameLayout.removeViewAt(0);
+        //game =  new GameCanvas(this);
+        //gameLayout.addView(game);
 
     }
 }

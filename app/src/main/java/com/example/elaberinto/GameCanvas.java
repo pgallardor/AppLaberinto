@@ -76,6 +76,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
             for (int i = 0; i < BLOCKS; i++) {
                 _wasOnBlock[i] = 0;
             }
+
             return;
         }
 
@@ -250,7 +251,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         canvas.restore();
         */
         if(hasWon()){
-            _thread.setRunning(false);
+            //_thread.setRunning(false);
             gameListener.onGameWon();
         }
     }
@@ -276,6 +277,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     public boolean hasWon(){
         return _gameWon;
     }
+    public void setWon(boolean state){ _gameWon = state;}
     public void setGameListener(GameListener gameListener){
         this.gameListener = gameListener;
     }
