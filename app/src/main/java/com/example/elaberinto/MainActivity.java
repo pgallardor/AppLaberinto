@@ -1,5 +1,6 @@
 package com.example.elaberinto;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -47,9 +48,18 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
         //launch intent to replace the level
         //gameLayout.removeAllViews();
         Log.d("GAME WON", "CALLBACK LEVEL COMPLETED");
+
         GameCanvas game = (GameCanvas) gameLayout.getChildAt(0);
+        //stop thread? or something:c
+        //game.setThreadRunning(false);
         //game.setVisibility(View.GONE);
-        game.loadLevel("test");
+
+        //AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //builder.setTitle("SomeTitle").setMessage("SomeMessage");
+        //AlertDialog dialog =  builder.create();
+        //dialog.show();
+        //game.setThreadRunning(true);
+        game.loadLevel("level1");
         game.setWon(false);
         game.setVisibility(View.VISIBLE);
         //gameLayout.removeViewAt(0);

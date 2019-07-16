@@ -1,6 +1,7 @@
 package com.example.elaberinto;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -60,13 +61,14 @@ public class Ball implements Solid{
         return _isAlive;
     }
 
-    public void draw(Canvas canvas){
+    public void draw(Canvas canvas, Bitmap bmp){
         if (!_isAlive) return;
 
         Paint p = new Paint();
         p.setColor(Color.GRAY);
-        canvas.drawCircle(_x, _y, RADIUS, p);
-
+        Bitmap locale = Bitmap.createScaledBitmap(bmp, 2*RADIUS, 2*RADIUS, false);
+        //canvas.drawCircle(_x, _y, RADIUS, p);
+        canvas.drawBitmap(locale, _x - RADIUS, _y - RADIUS, p);
         //draw velocity vector direction
         /*
         p.setColor(Color.RED);

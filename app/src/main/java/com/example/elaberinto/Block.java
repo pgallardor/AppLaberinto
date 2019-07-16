@@ -1,5 +1,7 @@
 package com.example.elaberinto;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -155,12 +157,15 @@ public class Block implements Solid {
     public double getYAccel() {
         return 0.0f;
     }
-    public void draw(Canvas canvas) {
+
+    public void draw(Canvas canvas, Bitmap bmp) {
         Paint p = new Paint();
         p.setColor(Color.rgb(102, 51, 0));
         canvas.save();
         canvas.rotate((float)_angle, _x, _y);
-        canvas.drawRect(_x, _y, _x + _width, _y + _height, p);
+        //canvas.drawRect(_x, _y, _x + _width, _y + _height, p);
+        Bitmap bl = Bitmap.createScaledBitmap(bmp, _width, _height, false);
+        canvas.drawBitmap(bl, _x, _y, p);
         p.setColor(Color.WHITE);
         p.setTextSize(24);
         canvas.drawText(String.valueOf(__id + 1), _x + _width / 2, _y + (_height + 6) /2, p);

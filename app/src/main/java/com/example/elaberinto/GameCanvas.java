@@ -1,6 +1,8 @@
 package com.example.elaberinto;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -33,6 +35,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     private float _lastCollisionX, _lastCollisionY;
     private int screenWidth, screenHeight;
     private GameListener gameListener;
+    private Bitmap _ballBMP, _bgBMP, _blockBMP;
 
     public GameCanvas(Context context) {
         super(context);
@@ -45,7 +48,11 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         _thread = new MainThread(getHolder(), this);
         _ball = new Ball();
 
-        loadLevel("kek");
+        _bgBMP = BitmapFactory.decodeResource(getResources(), R.drawable.background);
+        _blockBMP = BitmapFactory.decodeResource(getResources(), R.drawable.darkwood);
+        _ballBMP = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
+
+        loadLevel("test");
         //_ball.setAcceleration(0.0f, GRAVITY);
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -76,7 +83,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
             for (int i = 0; i < BLOCKS; i++) {
                 _wasOnBlock[i] = 0;
             }
-
+            HOLES = 0;
+            _hole = new Hole[1];
             return;
         }
 
@@ -211,8 +219,9 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
 
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        canvas.drawRGB(255, 255, 255);
+        //canvas.drawRGB(255, 255, 255);
         Paint p = new Paint();
+        canvas.drawBitmap(_bgBMP, 0, 0, p);
         p.setTextSize(40);
         canvas.save();
         canvas.scale((float)(screenWidth/1080.0), (float)(screenHeight/1920.0));
@@ -224,9 +233,9 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         p.setColor(Color.GREEN);
         canvas.drawRect(_goal, p);
 
-        _ball.draw(canvas);
+        _ball.draw(canvas, _ballBMP);
         for (int i = 0; i < BLOCKS; i++) {
-            _block[i].draw(canvas);
+            _block[i].draw(canvas, _blockBMP);
         }
         for (int i = 0; i < HOLES; i++){
             _hole[i].draw(canvas);
@@ -278,5 +287,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
     public void setWon(boolean state){ _gameWon = state;}
     public void setGameListener(GameListener gameListener){
         this.gameListener = gameListener;
+    }
+    public void setThreadRunning(boolean value){
+        _thread.setRunning(value);
     }
 }
