@@ -92,7 +92,6 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
                 lineCnt = 0;
             for (String l : line){
                 String[] args = l.split(" ");
-                Log.i("LINE", args[0]);
                 if (status == 0){
                     int x = Integer.parseInt(args[0]), y = Integer.parseInt(args[1].substring(0, args[1].length() - 1));
                     _startPoint = new Point(x, y);
@@ -190,7 +189,6 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback, V
         Pair<Double, Double> ballSpeed = new Pair<>(_ball.getXSpeed(), _ball.getYSpeed());
         for (int i = 0; i < BLOCKS; i++) {
             if (_block[i].isOnSurface((int)(sp.x+ballSpeed.first), (int) (sp.y + ballSpeed.second))) {
-                Log.d("COLLISION", "DETECTED SOMETHING");
                 _lastCollisionX = sp.x;
                 _lastCollisionY = sp.y;
                 //response to collision

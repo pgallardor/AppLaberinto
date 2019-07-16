@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
         Log.d("GAME WON", "CALLBACK LEVEL COMPLETED");
         GameCanvas game = (GameCanvas) gameLayout.getChildAt(0);
         //game.setVisibility(View.GONE);
-        game.loadLevel("kek");
+        game.loadLevel("test");
         game.setWon(false);
         game.setVisibility(View.VISIBLE);
         //gameLayout.removeViewAt(0);
