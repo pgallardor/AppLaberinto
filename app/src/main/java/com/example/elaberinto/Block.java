@@ -165,10 +165,13 @@ public class Block implements Solid {
         canvas.rotate((float)_angle, _x, _y);
         //canvas.drawRect(_x, _y, _x + _width, _y + _height, p);
         Bitmap bl = Bitmap.createScaledBitmap(bmp, _width, _height, false);
+
         canvas.drawBitmap(bl, _x, _y, p);
         p.setColor(Color.WHITE);
         p.setTextSize(24);
         canvas.drawText(String.valueOf(__id + 1), _x + _width / 2, _y + (_height + 6) /2, p);
+        //canvas.restore();
+
         canvas.restore();
         /*
         double radAngle = Math.toRadians(_angle);
@@ -176,8 +179,6 @@ public class Block implements Solid {
         float y1 = (float) (_y + (_width) * Math.sin(radAngle) + (_height) * Math.cos(radAngle));
 
         canvas.drawCircle(_x, _y, 10, p);
-        p.setColor(Color.RED);
-        canvas.drawCircle(x1,  y1, 10, p);
         */
     }
 }

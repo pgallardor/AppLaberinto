@@ -97,6 +97,7 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
         if (lvlID == 1) res_lvlID = R.raw.level1;
         if (lvlID == 2) res_lvlID = R.raw.level2;
         if (lvlID == 3) res_lvlID = R.raw.level3;
+        if (lvlID == 4) res_lvlID = R.raw.level4;
 
         InputStream is = getResources().openRawResource(res_lvlID);
         try{
@@ -221,15 +222,17 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
         canvas.drawText(String.format("rot x: %.5f rot y: %.5f", rotAccel.first, rotAccel.second), 100, 250, p);
 
         p.setColor(Color.GREEN);
+        p.setAlpha(80);
         canvas.drawRect(_goal, p);
+        p.setAlpha(100);
+
+        for(Hole hole : _hole){
+            hole.draw(canvas);
+        }
 
         _ball.draw(canvas,_ballBMP);
         for(Block block :_block){
             block.draw(canvas,_blockBMP);
-        }
-
-        for(Hole hole : _hole){
-            hole.draw(canvas);
         }
 
         if (_gameWon) {
@@ -240,8 +243,8 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
             canvas.drawText("You fell!", 100, 200, p);
         }
 
-        p.setColor(Color.BLUE);
-        canvas.drawCircle(_lastCollisionX, _lastCollisionY, 10, p);
+        //p.setColor(Color.BLUE);
+        //canvas.drawCircle(_lastCollisionX, _lastCollisionY, 10, p);
         canvas.restore();
 
         if(hasWon()){

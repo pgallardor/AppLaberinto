@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //setContentView(R.layout.activity_main);
-        level = 3;
+        level = 1;
         setContentView(R.layout.game_layout);
         game = new GameCanvas(this, level);
         gameLayout = findViewById(R.id.game_layout);
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
 
         Log.d("GAME WON", "CALLBACK LEVEL COMPLETED");
         Log.d("GAME WON", "LAUNCHING ACTIVITY");
-        if ((level+1) == 4){
+        if ((level+1) == 5){
             game.setRunning(false);
             //use a transition for that?
             runOnUiThread(new Runnable() {
@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
             });
             Intent i = new Intent(this, EndGameActivity.class);
             startActivity(i);
+            return;
         }
         /*
         Intent i = new Intent(this, TestActivity.class);
