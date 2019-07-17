@@ -1,6 +1,8 @@
 package com.example.elaberinto;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -36,8 +38,9 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
     private Context mContext;
     private boolean mRunning;
     private Thread mGameThread;
+    private Bitmap _ballBMP, _bgBMP, _blockBMP;
 
-    public GameCanvas(Context context, String level) {
+    public GameCanvas(Context context) {
         super(context);
         mContext = context;
         this.setOnTouchListener(this);
@@ -47,10 +50,16 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
         _lastCollisionY = 0;
         _gameWon = false;
         _ball = new Ball();
+
+        _bgBMP = BitmapFactory.decodeResource(getResources(), R.drawable.background);
+        _blockBMP = BitmapFactory.decodeResource(getResources(), R.drawable.darkwood);
+        _ballBMP = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
+
         _block = new ArrayList<>();
         _hole = new ArrayList<>();
-        loadLevel(level);
-        //_ball.setAcceleration(0.0f, GRAVITY);
+        loadLevel(0);
+
+
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
@@ -60,10 +69,10 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
         setFocusable(true);
     }
 
-    public void loadLevel(String filename) {
+    public void loadLevel(int lvlID) {
         _block.clear();
         _hole.clear();
-        if (filename.equals("test")) {
+        if (lvlID == 0) {
             BLOCKS = 5;
 
             //_block = new Block[BLOCKS];
@@ -81,11 +90,16 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
             _goal = new Rect(200, 1100, 300, 1200);
             _startPoint = new Point(100, 100);
 
-
+            HOLES = 0;
+           // _hole = new Hole[1];
             return;
         }
+        int res_lvlID = -1;
+        if (lvlID == 1) res_lvlID = R.raw.level1;
+        if (lvlID == 2) res_lvlID = R.raw.level2;
+        if (lvlID == 3) res_lvlID = R.raw.level3;
 
-        InputStream is = getResources().openRawResource(R.raw.level2);
+        InputStream is = getResources().openRawResource(res_lvlID);
         try{
             byte[] buffer = new byte[is.available()];
             String text = "";
@@ -97,7 +111,6 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
                 lineCnt = 0;
             for (String l : line){
                 String[] args = l.split(" ");
-                Log.i("LINE", args[0]);
                 if (status == 0){
                     int x = Integer.parseInt(args[0]), y = Integer.parseInt(args[1].substring(0, args[1].length() - 1));
                     _startPoint = new Point(x, y);
@@ -195,19 +208,11 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
                 ihole.onImpact(_ball);
             }
         }
-        /*
-        for (int ihole = 0; ihole < HOLES; ihole++){
-            if (_hole.get(ihole).isOnSurface(sp.x, sp.y)){
-                _hole.get(ihole).onImpact(_ball);
-            }
-        }
-        */
     }
 
     public void drawOnCanvas(Canvas canvas) {
-        //super.draw(canvas);
-        canvas.drawRGB(255, 255, 255);
         Paint p = new Paint();
+        canvas.drawBitmap(_bgBMP, 0, 0, p);
         p.setTextSize(40);
         canvas.save();
         canvas.scale((float)(screenWidth/1080.0), (float)(screenHeight/1920.0));
@@ -219,17 +224,11 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
         p.setColor(Color.GREEN);
         canvas.drawRect(_goal, p);
 
-        _ball.draw(canvas);
+        _ball.draw(canvas,_ballBMP);
         for(Block block :_block){
-            block.draw(canvas);
-        }/*
-        for (int i = 0; i < BLOCKS; i++) {
-            _block.get(i).draw(canvas);
+            block.draw(canvas,_blockBMP);
         }
-        for (int i = 0; i < HOLES; i++){
-            _hole.get(i).draw(canvas);
-        }
-        */
+
         for(Hole hole : _hole){
             hole.draw(canvas);
         }
@@ -245,11 +244,7 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
         p.setColor(Color.BLUE);
         canvas.drawCircle(_lastCollisionX, _lastCollisionY, 10, p);
         canvas.restore();
-        //assume we draw on a 10000x10000 canvas
-        /*
-        canvas.translate(screenWidth, screenHeight);
-        canvas.restore();
-        */
+
         if(hasWon()){
             //_thread.setRunning(false);
             gameListener.onGameWon();
@@ -258,8 +253,6 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
-        //System.out.println(view.getX() + " " + view.getY());
-        //if (_gameWon) return false;
         _ball.setStatus(Ball.ALIVE);
         int x = Math.round(event.getX()),
                 y = Math.round(event.getY());

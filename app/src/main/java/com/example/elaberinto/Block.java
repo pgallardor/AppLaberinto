@@ -1,5 +1,7 @@
 package com.example.elaberinto;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -23,7 +25,6 @@ public class Block implements Solid {
     }
 
     public void onCollide(Solid s){
-        Log.d("ONCOLLIDE", "METHOD CALLLED");
         Point sp = s.getPosition();
         Double radAngle = Math.toRadians(_angle);
         Double vx = s.getXSpeed();
@@ -36,14 +37,12 @@ public class Block implements Solid {
                uy = _width*Math.sin(radAngle);
         Double theta = Math.acos((ux*vx + uy*vy)/(Math.sqrt(vx*vx + vy*vy)*_width + 1e-6));
         //idea, rotate the speed vector in 90 - _alpha degrees?
-        Log.d("ONCOLLIDE", "theta: "+ theta);
         //s.setSpeed(vx * Math.cos(90-theta), vy * Math.sin(90-theta));
         //s.setAcceleration(Math.signum(s.getXAccel()) * GameCanvas.GRAVITY * Math.cos(radAngle),
         //        Math.signum(s.getYAccel()) * GameCanvas.GRAVITY * Math.sin(radAngle));
     }
 
     public void onImpact(Solid s){
-        Log.d("IMPACT", "ANGLE_" + _angle);
         Point sp = s.getPosition();
         Double vx = s.getXSpeed();
         Double vy = s.getYSpeed();
@@ -54,7 +53,6 @@ public class Block implements Solid {
         Double ux = _width*Math.cos(Math.toRadians(_angle));
         Double uy = _width*Math.sin(Math.toRadians(_angle));
         Double theta = Math.acos((ux*vx + uy*vy)/(Math.sqrt(vx*vx + vy*vy)*_width + 1e-6));
-        Log.d("ONIMPACT ANGLE: ", String.valueOf(Math.toDegrees(theta)));
 
         s.setSpeed(vx*Math.cos(theta), vy*Math.sin(theta));
         /*
@@ -69,7 +67,6 @@ public class Block implements Solid {
         //s.setAcceleration(0, 0);
     }
     public void resolveCollision(Solid s){
-        Log.d("RESOLVE COLLISION", "ANGLE_" + _angle);
         Point sp = s.getPosition();
         Double vx = s.getXSpeed();
         Double vy = s.getYSpeed();
@@ -80,7 +77,6 @@ public class Block implements Solid {
         Double ux = _width*Math.cos(Math.toRadians(_angle));
         Double uy = _width*Math.sin(Math.toRadians(_angle));
         Double theta = Math.acos((ux*vx + uy*vy)/(Math.sqrt(vx*vx + vy*vy)*_width + 1e-6));
-        Log.d("ONIMPACT ANGLE: ", String.valueOf(Math.toDegrees(theta)));
 
         //s.setSpeed(vx*Math.cos(theta), vy*Math.sin(theta));
         //move solid to nearest point before collision.
@@ -161,12 +157,15 @@ public class Block implements Solid {
     public double getYAccel() {
         return 0.0f;
     }
-    public void draw(Canvas canvas) {
+
+    public void draw(Canvas canvas, Bitmap bmp) {
         Paint p = new Paint();
         p.setColor(Color.rgb(102, 51, 0));
         canvas.save();
         canvas.rotate((float)_angle, _x, _y);
-        canvas.drawRect(_x, _y, _x + _width, _y + _height, p);
+        //canvas.drawRect(_x, _y, _x + _width, _y + _height, p);
+        Bitmap bl = Bitmap.createScaledBitmap(bmp, _width, _height, false);
+        canvas.drawBitmap(bl, _x, _y, p);
         p.setColor(Color.WHITE);
         p.setTextSize(24);
         canvas.drawText(String.valueOf(__id + 1), _x + _width / 2, _y + (_height + 6) /2, p);

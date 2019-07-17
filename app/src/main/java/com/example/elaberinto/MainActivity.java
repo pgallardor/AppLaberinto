@@ -16,28 +16,26 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity implements GameCanvas.GameListener {
     private FrameLayout gameLayout;
     private GameCanvas game;
+    private int level;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        /*
+
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         getSupportActionBar().hide();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);*/
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //setContentView(R.layout.activity_main);
-        game = new GameCanvas(this, "test");
-        game.setGameListener(this);
-        //setContentView(game);
-
+        level = 0;
         setContentView(R.layout.game_layout);
-        //game.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+        game = new GameCanvas(this);
         gameLayout = findViewById(R.id.game_layout);
+        game.setGameListener(this);
         gameLayout.addView(game);
-        //gameLayout.removeAllViews();
-        /*
-        */
+
+
 
     }
     @Override
@@ -73,14 +71,11 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
         //game.setThreadRunning(false);
         //game.setVisibility(View.GONE);
 
-
         //game.setThreadRunning(true);
-        //game.loadLevel("level2");
-        //game.setWon(false);
+        game.loadLevel(++level);
+        game.setWon(false);
+        game.setVisibility(View.VISIBLE);
 
-        //gameLayout.removeViewAt(0);
-        //game =  new GameCanvas(this);
-        //gameLayout.addView(game);
 
     }
 }
