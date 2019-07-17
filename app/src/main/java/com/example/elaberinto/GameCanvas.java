@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchListener {
+    public static final double GRAVITY = 2.0f;
+    public static int BLOCKS = 5, HOLES = 1;
     private Ball _ball;
     private ArrayList<Block> _block;
     private Rect _goal;
@@ -29,9 +31,6 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
     private Point _startPoint;
     private ArrayList<Hole> _hole;
     private GameInclination gameInclination;
-    public static int BLOCKS = 5, HOLES = 1;
-    public static final double GRAVITY = 2.0f;
-    private float _lastCollisionX, _lastCollisionY;
     private int screenWidth, screenHeight;
     private GameListener gameListener;
     private SurfaceHolder surfaceHolder;
@@ -39,14 +38,13 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
     private boolean mRunning;
     private Thread mGameThread;
     private Bitmap _ballBMP, _bgBMP, _blockBMP;
+
     public GameCanvas(Context context, int startLevel) {
         super(context);
         mContext = context;
         this.setOnTouchListener(this);
         surfaceHolder = getHolder();
         gameInclination = new GameInclination(context);
-        _lastCollisionX = 0;
-        _lastCollisionY = 0;
         _gameWon = false;
         _ball = new Ball();
 
@@ -74,8 +72,7 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
         if (lvlID == 0) {
             BLOCKS = 5;
 
-            //_block = new Block[BLOCKS];
-            Block b1  = new Block(400, 400, 20, 200, 0.0f);
+            Block b1 = new Block(400, 400, 20, 200, 0.0f);
             Block b2 = new Block(370, 600, 20, 200, 30.0f);
             Block b3 = new Block(400, 900, 20, 400, 330.0f);
             Block b4 = new Block(200, 1100, 20, 160, 80.0f);
@@ -90,39 +87,37 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
             _startPoint = new Point(100, 100);
 
             HOLES = 0;
-           // _hole = new Hole[1];
             return;
         }
         int res_lvlID = -1;
         if (lvlID == 1) res_lvlID = R.raw.level1;
         if (lvlID == 2) res_lvlID = R.raw.level2;
         if (lvlID == 3) res_lvlID = R.raw.level3;
+        if (lvlID == 4) res_lvlID = R.raw.level4;
 
         InputStream is = getResources().openRawResource(res_lvlID);
-        try{
+        try {
             byte[] buffer = new byte[is.available()];
             String text = "";
-            while (is.read(buffer) != -1){
+            while (is.read(buffer) != -1) {
                 text = new String(buffer);
             }
             String[] line = text.split("\n");
             int status = 0, //0 init, 1 goal, 2 Nblocks, 3blocks, 4 Nholes, 5 holes
-                lineCnt = 0;
-            for (String l : line){
+                    lineCnt = 0;
+            for (String l : line) {
                 String[] args = l.split(" ");
-                if (status == 0){
+                if (status == 0) {
                     int x = Integer.parseInt(args[0]), y = Integer.parseInt(args[1].substring(0, args[1].length() - 1));
                     _startPoint = new Point(x, y);
                     status++;
-                }
-
-                else if (status == 1 || status == 3 || status == 5){
+                } else if (status == 1 || status == 3 || status == 5) {
                     int nArgs = 4;
                     if (status == 3) nArgs = 5;
                     if (status == 5) nArgs = 3;
 
                     int[] pts = new int[nArgs];
-                    for (int i = 0; i < nArgs; i++){
+                    for (int i = 0; i < nArgs; i++) {
                         int parsed = 0;
                         if (i == nArgs - 1)
                             parsed = Integer.parseInt(args[i].substring(0, args[i].length() - 1));
@@ -130,55 +125,47 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
                         pts[i] = parsed;
                     }
 
-                    if (status == 1){
+                    if (status == 1) {
                         _goal = new Rect(pts[0], pts[1], pts[2], pts[3]);
                         status++;
                     }
 
-                    if (status == 3){
-                        //_block[lineCnt] = new Block(pts[0], pts[1], pts[2], pts[3], pts[4]);
+                    if (status == 3) {
                         _block.add(new Block(pts[0], pts[1], pts[2], pts[3], pts[4]));
 
                         lineCnt++;
-                        if (lineCnt == BLOCKS){
+                        if (lineCnt == BLOCKS) {
                             lineCnt = 0;
                             status++;
                         }
                     }
 
-                    if (status == 5){
-                        //_hole[lineCnt] = new Hole(pts[0], pts[1], pts[2]);
+                    if (status == 5) {
                         _hole.add(new Hole(pts[0], pts[1], pts[2]));
                         lineCnt++;
-                        if (lineCnt == HOLES){
+                        if (lineCnt == HOLES) {
                             lineCnt = 0;
                             status++;
                         }
                     }
-                }
-
-                else if (status == 2){
+                } else if (status == 2) {
                     BLOCKS = Integer.parseInt(args[0].substring(0, args[0].length() - 1));
-                    //_block = new Block[BLOCKS];
                     _block.clear();
                     status++;
-                }
-
-                else if (status == 4){
+                } else if (status == 4) {
                     HOLES = Integer.parseInt(args[0].substring(0, args[0].length() - 1));
                     _hole.clear();
-                    //_hole = new Hole[HOLES];
                     status++;
                 }
             }
-        } catch(IOException e){ }
+        } catch (IOException e) {
+        }
 
         _ball.move(_startPoint.x, _startPoint.y);
 
     }
 
     public void calcPhysics() {
-        // _ball.setAcceleration(_ball.getXAccel(), GRAVITY);
         _ball.calcMovement();
 
         Pair<Double, Double> rotAccel = gameInclination.getAcceleration();
@@ -187,14 +174,11 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
         //check for position on the NEXT frame
         Pair<Double, Double> ballSpeed = new Pair<>(_ball.getXSpeed(), _ball.getYSpeed());
         for (int i = 0; i < BLOCKS; i++) {
-            if (_block.get(i).isOnSurface((int)(sp.x+ballSpeed.first), (int) (sp.y + ballSpeed.second))) {
+            if (_block.get(i).isOnSurface((int) (sp.x + ballSpeed.first), (int) (sp.y + ballSpeed.second))) {
                 Log.d("COLLISION", "DETECTED SOMETHING");
-                _lastCollisionX = sp.x;
-                _lastCollisionY = sp.y;
                 //response to collision
-                _block.get(i).resolveCollision(_ball);
+                _block.get(i).onImpact(_ball);
                 //move to previous time
-                //_ball.move((int)(sp.x-ballSpeed.first+_ball.getXAccel()), (int)(sp.y-ballSpeed.second+_ball.getYSpeed()));
             }
         }
 
@@ -202,8 +186,8 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
         if (_goal.left <= sp.x && sp.x <= _goal.right && _goal.top <= sp.y && sp.y <= _goal.bottom) {
             _gameWon = true;
         }
-        for(Hole ihole:_hole){
-            if (ihole.isOnSurface(sp.x, sp.y)){
+        for (Hole ihole : _hole) {
+            if (ihole.isOnSurface(sp.x, sp.y)) {
                 ihole.onImpact(_ball);
             }
         }
@@ -214,38 +198,34 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
         canvas.drawBitmap(_bgBMP, 0, 0, p);
         p.setTextSize(40);
         canvas.save();
-        canvas.scale((float)(screenWidth/1080.0), (float)(screenHeight/1920.0));
-        canvas.drawText(String.format("vx: %.2f vy: %.2f", _ball.getXSpeed(), _ball.getYSpeed()), 100, 100, p);
-        canvas.drawText(String.format("ax: %.2f ay: %.2f", _ball.getXAccel(), _ball.getYAccel()), 100, 150, p);
-        Pair<Double, Double> rotAccel = gameInclination.getAcceleration();
-        canvas.drawText(String.format("rot x: %.5f rot y: %.5f", rotAccel.first, rotAccel.second), 100, 250, p);
+        canvas.scale((float) (screenWidth / 1080.0), (float) (screenHeight / 1920.0));
 
         p.setColor(Color.GREEN);
+        p.setAlpha(80);
         canvas.drawRect(_goal, p);
+        p.setAlpha(100);
 
-        _ball.draw(canvas,_ballBMP);
-        for(Block block :_block){
-            block.draw(canvas,_blockBMP);
+        for (Hole hole : _hole) {
+            hole.draw(canvas);
         }
 
-        for(Hole hole : _hole){
-            hole.draw(canvas);
+        _ball.draw(canvas, _ballBMP);
+        for (Block block : _block) {
+            block.draw(canvas, _blockBMP);
         }
 
         if (_gameWon) {
             canvas.drawText("You won!", 100, 200, p);
         }
-        if (!_ball.isAlive()){
+        if (!_ball.isAlive()) {
             p.setColor(Color.RED);
             canvas.drawText("You fell!", 100, 200, p);
+            _ball.move(_startPoint.x, _startPoint.y);
         }
 
-        p.setColor(Color.BLUE);
-        canvas.drawCircle(_lastCollisionX, _lastCollisionY, 10, p);
         canvas.restore();
 
-        if(hasWon()){
-            //_thread.setRunning(false);
+        if (hasWon()) {
             gameListener.onGameWon();
         }
     }
@@ -258,7 +238,6 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
 
         System.out.println(x + ", " + y);
         _ball.setSpeed(0.0f, 0.0f);
-        //_ball.setAcceleration(-0.8f, 0.0f);
         _ball.move(_startPoint.x, _startPoint.y);
 
         return true;
@@ -267,16 +246,13 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
     @Override
     public void run() {
         Canvas canvas;
-        while(mRunning){
-            if(surfaceHolder.getSurface().isValid()){
+        while (mRunning) {
+            if (surfaceHolder.getSurface().isValid()) {
                 canvas = surfaceHolder.lockCanvas();
-                //canvas.save();
-                calcPhysics();
-                drawOnCanvas(canvas);
-                //canvas.restore();
+                //canvas save and restore is done in the draw
+                calcPhysics(); //physics
+                drawOnCanvas(canvas); //draw
                 surfaceHolder.unlockCanvasAndPost(canvas);
-                //physics
-                //draw
             }
         }
     }
@@ -285,7 +261,7 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
         mRunning = false;
         try {
             mGameThread.join();
-        } catch (InterruptedException e){
+        } catch (InterruptedException e) {
 
         }
     }
@@ -296,18 +272,24 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
         mGameThread.start();
     }
 
-    public interface GameListener {
-        void onGameWon();
-    }
-    public boolean hasWon(){
+    public boolean hasWon() {
         return _gameWon;
     }
-    public void setWon(boolean state){ _gameWon = state;}
-    public void setGameListener(GameListener gameListener){
+
+    public void setWon(boolean state) {
+        _gameWon = state;
+    }
+
+    public void setGameListener(GameListener gameListener) {
         this.gameListener = gameListener;
     }
-    public void setRunning(boolean state){
+
+    public void setRunning(boolean state) {
         mRunning = state;
+    }
+
+    public interface GameListener {
+        void onGameWon();
     }
 
 }

@@ -1,8 +1,8 @@
 package com.example.elaberinto;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class EndGameActivity extends AppCompatActivity {
 

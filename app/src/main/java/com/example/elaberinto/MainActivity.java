@@ -1,15 +1,13 @@
 package com.example.elaberinto;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity implements GameCanvas.GameListener {
     private FrameLayout gameLayout;
@@ -26,8 +24,6 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
         gameLayout = findViewById(R.id.game_layout);
         game.setGameListener(this);
         gameLayout.addView(game);
-
-
     }
 
     @Override
@@ -48,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
         //launch intent to replace the level
 
         Log.d("GAME WON", "CALLBACK LEVEL COMPLETED");
-        if ((level + 1) == 4) {
+        if ((level + 1) == 5) {
             Log.d("GAME WON", "LAUNCHING ACTIVITY");
             //use a transition for that?
             game.setRunning(false);
@@ -56,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    //game.setVisibility(View.GONE);
+                    game.setVisibility(View.GONE);
                     gameLayout.removeAllViews();
                 }
             });

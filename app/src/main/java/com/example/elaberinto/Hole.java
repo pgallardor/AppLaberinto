@@ -8,7 +8,7 @@ import android.graphics.Point;
 public class Hole implements Solid {
     private int _x, _y, _radius;
 
-    public Hole(int x, int y, int r){
+    public Hole(int x, int y, int r) {
         _x = x;
         _y = y;
         _radius = r;
@@ -21,7 +21,7 @@ public class Hole implements Solid {
 
     @Override
     public void onImpact(Solid s) {
-        if (s instanceof Ball){
+        if (s instanceof Ball) {
             Ball b = (Ball) s;
             b.setStatus(!Ball.ALIVE);
         }
@@ -30,12 +30,12 @@ public class Hole implements Solid {
     @Override
     public boolean isOnSurface(int circleX, int circleY) {
         double x = Math.pow(circleX - _x, 2),
-               y = Math.pow(circleY - _y, 2);
+                y = Math.pow(circleY - _y, 2);
 
-        return x + y <= _radius*_radius;
+        return x + y <= _radius * _radius;
     }
 
-    public void draw(Canvas canvas){
+    public void draw(Canvas canvas) {
         Paint p = new Paint();
         p.setColor(Color.BLACK);
         canvas.drawCircle(_x, _y, _radius + 7, p);
