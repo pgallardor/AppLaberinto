@@ -1,6 +1,5 @@
 package com.example.elaberinto;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements GameCanvas.GameListener {
     private FrameLayout gameLayout;
@@ -28,9 +26,9 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //setContentView(R.layout.activity_main);
-        level = 0;
+        level = 3;
         setContentView(R.layout.game_layout);
-        game = new GameCanvas(this);
+        game = new GameCanvas(this, level);
         gameLayout = findViewById(R.id.game_layout);
         game.setGameListener(this);
         gameLayout.addView(game);
@@ -55,6 +53,19 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
 
         Log.d("GAME WON", "CALLBACK LEVEL COMPLETED");
         Log.d("GAME WON", "LAUNCHING ACTIVITY");
+        if ((level+1) == 4){
+            game.setRunning(false);
+            //use a transition for that?
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    game.setVisibility(View.GONE);
+                    gameLayout.removeAllViews();
+                }
+            });
+            Intent i = new Intent(this, EndGameActivity.class);
+            startActivity(i);
+        }
         /*
         Intent i = new Intent(this, TestActivity.class);
         runOnUiThread(new Runnable() {
@@ -73,6 +84,9 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
 
         //game.setThreadRunning(true);
         game.loadLevel(++level);
+        //display end game screen
+        //maybe allow to go back to start screen on that Intent?
+
         game.setWon(false);
         game.setVisibility(View.VISIBLE);
 

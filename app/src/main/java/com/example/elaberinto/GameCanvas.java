@@ -39,8 +39,7 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
     private boolean mRunning;
     private Thread mGameThread;
     private Bitmap _ballBMP, _bgBMP, _blockBMP;
-
-    public GameCanvas(Context context) {
+    public GameCanvas(Context context, int startLevel) {
         super(context);
         mContext = context;
         this.setOnTouchListener(this);
@@ -57,7 +56,7 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
 
         _block = new ArrayList<>();
         _hole = new ArrayList<>();
-        loadLevel(0);
+        loadLevel(startLevel);
 
 
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
