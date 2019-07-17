@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity implements GameCanvas.GameLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        level = 0;
+        level = 1;
         setContentView(R.layout.game_layout);
         game = new GameCanvas(this, level);
         gameLayout = findViewById(R.id.game_layout);

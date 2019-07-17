@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.Log;
 
 public class Block implements Solid {
     public static int N = 0;
@@ -52,13 +53,13 @@ public class Block implements Solid {
         //move solid to nearest point before collision.
         //or bounce back?
 
-
+        Log.i("IMPACT", "DEG: " + Math.toDegrees(theta));
         if (theta > Math.PI / 2) theta = theta - Math.PI / 2;
         //damp speed
-        float slowFactor = 0.8f;
+        float slowFactor = 0.9f;
         if (Math.abs(_angle - 90.0f) < 1e-6) {
             s.setSpeed(-vx * Math.cos(-theta) * slowFactor, -vy * Math.sin(-theta) * slowFactor);
-        } else s.setSpeed(vx * Math.cos(-theta) * slowFactor, vy * Math.sin(-theta * slowFactor));
+        } else s.setSpeed(vx * Math.cos(-theta) * slowFactor, vy * Math.sin(-theta) * slowFactor);
 
         //Point near = nearest(sp.x, sp.y);
         //s.move(near.x, near.y);
@@ -67,6 +68,7 @@ public class Block implements Solid {
 
     public boolean isOnSurface(int circleX, int circleY) {
         double radAngle = Math.toRadians(_angle);
+        final int OFFSET = 5;
         //rotate (circleX, circleY) before comparison
         //https://math.stackexchange.com/questions/1687901/how-to-rotate-a-line-segment-around-one-of-the-end-points
         double cosTheta = Math.cos(radAngle);
@@ -78,7 +80,7 @@ public class Block implements Solid {
         circleX = (int) testX;
         circleY = (int) testY;
         //return (circleX >= _x && circleX <= _x + _width && circleY >= _y && circleY <= y + _height);
-        return (circleX >= _x && circleX <= _x + _width && circleY >= _y && circleY <= _y + _height);
+        return (circleX >= _x - OFFSET && circleX <= _x - OFFSET + _width && circleY >= _y - OFFSET && circleY <= _y + _height - OFFSET);
     }
 
     private Point nearest(int sx, int sy) {
