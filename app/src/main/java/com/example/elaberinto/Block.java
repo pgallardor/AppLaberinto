@@ -85,7 +85,7 @@ public class Block implements Solid {
 
         if (theta > Math.PI / 2) theta = theta - Math.PI / 2;
         //damp speed
-        float slowFactor = 0.9f;
+        float slowFactor = 0.8f;
         if (Math.abs(_angle - 90.0f) < 1e-6){
             s.setSpeed(-vx*Math.cos(-theta)*slowFactor, -vy*Math.sin(-theta)*slowFactor);
         }

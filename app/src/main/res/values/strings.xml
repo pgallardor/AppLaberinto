@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ElabeRinto</string>
+    <string name="authors"><![CDATA[Authors: Pedro Gallardo & Alexis Sánchez]]></string>
+    <string name="game_ending_thanks">Thanks for playing our game!</string>
+    <string name="icon_author">App Icon made by Freepik from flaticon.com</string>
+    <string name="instructions">Welcome to our game: Laberynth, the objective is to move the ball from the start to the goal using motion controls, all while avoiding the holes in the way. To start, press the button below!</string>
 </resources>

@@ -12,7 +12,7 @@ public class Ball implements Solid{
     private int _x, _y;
     private double _speedX, _speedY, _weight, _acX, _acY;
     public static final int RADIUS = 20;
-    private static final double MAX_SPEED = 7.0f;
+    private static final double MAX_SPEED = 5.0f;
     public static final boolean ALIVE = true;
     private boolean _isAlive;
 
@@ -37,19 +37,19 @@ public class Ball implements Solid{
     }
 
     public void calcMovement(){ //velocity vector
-        //first calc the new position
-        _y = (int)(_y + Math.round(_speedY));
-        _x = (int)(_x + Math.round(_speedX));
-
-        _speedY += _acY; //accel
-        _speedX += _acX;
-
         //speed capping
         if (Math.abs(_speedY) > MAX_SPEED) //modular or component cap??
             _speedY = Math.signum(_speedY)*MAX_SPEED;
 
         if (Math.abs(_speedX) > MAX_SPEED)
             _speedX = Math.signum(_speedX)*MAX_SPEED;
+
+        //first calc the new position
+        _y = (int)(_y + Math.round(_speedY));
+        _x = (int)(_x + Math.round(_speedX));
+
+        _speedY += _acY; //accel
+        _speedX += _acX;
 
     }
 

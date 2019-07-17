@@ -5,11 +5,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_gravity="center"
+    android:gravity="center"
+    android:background="@drawable/background"
+    android:backgroundTint="@color/colorBlackAlpha"
+    android:backgroundTintMode="src_over"
     tools:context=".EndGameActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Thanks for playing our game!"/>
+        android:textColor="@color/textColor"
+        android:textStyle="bold"
+        android:text="@string/game_ending_thanks"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/textColor"
+        android:textStyle="bold"
+        android:text="@string/authors"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/textColor"
+        android:textStyle="bold"
+        android:text="@string/icon_author"
+        android:autoLink="web"
+
+        />
 </LinearLayout>
