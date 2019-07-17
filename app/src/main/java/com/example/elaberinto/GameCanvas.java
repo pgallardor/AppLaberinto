@@ -43,6 +43,7 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
         super(context);
         mContext = context;
         this.setOnTouchListener(this);
+        this.setKeepScreenOn(true);
         surfaceHolder = getHolder();
         gameInclination = new GameInclination(context);
         _gameWon = false;
@@ -219,7 +220,8 @@ public class GameCanvas extends SurfaceView implements Runnable, View.OnTouchLis
         }
         if (!_ball.isAlive()) {
             p.setColor(Color.RED);
-            canvas.drawText("You fell!", 100, 200, p);
+            p.setTextSize(72);
+            canvas.drawText("You fell! Tap to try again.", 150, 1800, p);
             _ball.move(_startPoint.x, _startPoint.y);
         }
 
